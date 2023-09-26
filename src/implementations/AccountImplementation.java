@@ -17,7 +17,7 @@ public class AccountImplementation implements AccountInterface {
     }
 
     @Override
-    public CurrentAccount addcurrent(CurrentAccount currentaccount) {
+    public CurrentAccount addcurrent(String employeeMatricule,Integer clientCode,CurrentAccount currentaccount){
         LocalDate currentDate = LocalDate.now();
         currentaccount.setCreationDate(currentDate);
         try {
@@ -28,13 +28,15 @@ public class AccountImplementation implements AccountInterface {
 
             // First, insert data into the 'account' table and retrieve the generated 'number'
             PreparedStatement accountStatement = connection.prepareStatement(
-                    "INSERT INTO account (balance, creationDate, accountstatus) VALUES (?, ?, ?) RETURNING number"
+                    "INSERT INTO account (balance, creationDate, accountstatus , matricule , code) VALUES (?, ?, ?, ? ,?) RETURNING number"
             );
 
             // Set the values for the 'account' table
             accountStatement.setDouble(1, currentaccount.getBalance());
             accountStatement.setDate(2, java.sql.Date.valueOf(currentaccount.getCreationDate()));
             accountStatement.setString(3, currentaccount.getStatus().name());
+            accountStatement.setString(4, currentaccount.getEmployee().getMatricule());
+            accountStatement.setInt(5, currentaccount.getClient().getCode());
 
             ResultSet resultSet = accountStatement.executeQuery();
             if (resultSet.next()) {
@@ -76,7 +78,7 @@ public class AccountImplementation implements AccountInterface {
     }
 
     @Override
-    public SavingAccount addsaving(SavingAccount savingaccount) {
+    public SavingAccount addsaving(SavingAccount savingaccount ,Integer clientCode,String employeeMatricule) {
         LocalDate currentDate = LocalDate.now();
         savingaccount.setCreationDate(currentDate);
         try {
@@ -87,13 +89,15 @@ public class AccountImplementation implements AccountInterface {
 
             // First, insert data into the 'account' table and retrieve the generated 'number'
             PreparedStatement accountStatement = connection.prepareStatement(
-                    "INSERT INTO account (balance, creationDate, accountstatus) VALUES (?, ?, ?) RETURNING number"
+                    "INSERT INTO account (balance, creationDate, accountstatus , matricule , code) VALUES (?, ?, ? , ? , ?) RETURNING number"
             );
 
             // Set the values for the 'account' table
             accountStatement.setDouble(1, savingaccount.getBalance());
             accountStatement.setDate(2, java.sql.Date.valueOf(savingaccount.getCreationDate()));
             accountStatement.setString(3, savingaccount.getStatus().name());
+            accountStatement.setString(4, savingaccount.getEmployee().getMatricule());
+            accountStatement.setInt(5, savingaccount.getClient().getCode());
 
             ResultSet resultSet = accountStatement.executeQuery();
             if (resultSet.next()) {

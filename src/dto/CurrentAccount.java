@@ -9,8 +9,8 @@ public class CurrentAccount extends Account{
     public CurrentAccount(){
         super();
     }
-    public CurrentAccount(Integer number, float balance, LocalDate creationDate, AccountStatus status , float overdraft){
-        super( number, balance, creationDate, status);
+    public CurrentAccount(Integer number, float balance, LocalDate creationDate, AccountStatus status ,Employee employee , Client client , float overdraft){
+        super( number, balance, creationDate, status , employee, client);
         this.overdraft = overdraft;
     }
 

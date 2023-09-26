@@ -416,6 +416,17 @@ public class Main {
                     }
                     break;
                 case 13://add current account
+                    System.out.print("Enter your matricule: ");
+                    String employeeMatricule = scanner.nextLine();
+                    currentaccount.setEmployee(employee);
+                    currentaccount.getEmployee().setMatricule(employeeMatricule);
+
+                    System.out.print("Enter client code: ");
+                    Integer clientCode = scanner.nextInt();
+                    currentaccount.setClient(client);
+                    currentaccount.getClient().setCode(clientCode);
+                    scanner.nextLine();
+
                     System.out.print("Enter the balance: ");
                     currentaccount.setBalance(scanner.nextFloat());
                     scanner.nextLine();
@@ -445,7 +456,7 @@ public class Main {
                     currentaccount.setOverdraft(scanner.nextFloat());
                     scanner.nextLine();
 
-                    if (accountI.addcurrent(currentaccount) != null) {
+                    if (accountI.addcurrent(employeeMatricule,clientCode, currentaccount) != null) {
                         System.out.println("Current account added successfully!:");
                         System.out.println("account number: " + currentaccount.getNumber() + ",balance: " + currentaccount.getBalance() + ",Creation date: " + currentaccount.getCreationDate() + " status: " + currentaccount.getStatus() + ", Overdraft: " + currentaccount.getOverdraft()  );
                     } else {
@@ -454,6 +465,16 @@ public class Main {
                     break;
 
                 case 14://add saving account
+                    System.out.print("Enter your matricule: ");
+                    String employeeMatriculee = scanner.nextLine();
+                    currentaccount.setEmployee(employee);
+                    currentaccount.getEmployee().setMatricule(employeeMatriculee);
+
+                    System.out.print("Enter client code: ");
+                    Integer clientCodee = scanner.nextInt();
+                    currentaccount.setClient(client);
+                    currentaccount.getClient().setCode(clientCodee);
+                    scanner.nextLine();
                     System.out.print("Enter the balance: ");
                     savingaccount.setBalance(scanner.nextFloat());
                     scanner.nextLine();
@@ -483,7 +504,7 @@ public class Main {
                     savingaccount.setInterestRate(scanner.nextFloat());
                     scanner.nextLine();
 
-                    if (accountI.addsaving(savingaccount) != null) {
+                    if (accountI.addsaving(employeeMatricule,clientCode,savingaccount) != null) {
                         System.out.println("saving account added successfully!:");
                         System.out.println("account number: " + savingaccount.getNumber() + ",balance: " + savingaccount.getBalance() + ",Creation date: " + savingaccount.getCreationDate() + " status: " + savingaccount.getStatus() + ", Overdraft: " + savingaccount.getInterestRate()  );
                     } else {

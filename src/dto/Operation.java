@@ -9,6 +9,7 @@ public class Operation {
     private float montant;
     private typeOperation type;
 
+
     public Operation(){}
     public Operation(Integer number, LocalDate creationDate, float montant, typeOperation type){
         this.number = number;
