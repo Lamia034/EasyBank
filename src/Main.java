@@ -50,6 +50,7 @@ public class Main {
             System.out.println("9. Delete Client");//done
             System.out.println("10. Display all Clients");//done
             System.out.println("11. Update Client");//done
+            System.out.println("12. Find Client by any of it's informations");//done
 
             choice = scanner.nextInt();
             scanner.nextLine();
@@ -388,9 +389,27 @@ public class Main {
                     } catch (NumberFormatException e) {
                         System.out.println("Invalid input. Please enter a valid code.");
                     }
+                    break;
+                case 12: // Find client by attributes
+                    System.out.print("Enter any of the client's information to search: ");
+                    String searchValue2 = scanner.nextLine();
 
+                    List<Client> foundclients = clientI.searchClient(searchValue2);
 
-
+                    if (!foundclients.isEmpty()) {
+                        System.out.println("Found client(s):");
+                        for (Client foundclient : foundclients) {
+                            System.out.println("code: " + foundclient.getCode());
+                            System.out.println("Name: " + foundclient.getName());
+                            System.out.println("Prenoun: " + foundclient.getPrenoun());
+                            System.out.println("Birth date: " + foundclient.getBirthDate());
+                            System.out.println("adresse: " + foundclient.getAdresse());
+                            System.out.println("Phone: " + foundclient.getPhone());
+                            System.out.println();
+                        }
+                    } else {
+                        System.out.println("No client found with the provided information: " + searchValue2);
+                    }
                     break;
             }
 

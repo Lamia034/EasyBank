@@ -158,4 +158,48 @@ public class ClientImplementation implements ClientInterface {
         return null;
     }
 
+    public List<Client> searchClient(String searchValue2){
+        Connection conn = db.getConnection();
+
+        String searchQuery = "SELECT * FROM client WHERE " +
+                "name ILIKE ? OR " +
+                "prenoun ILIKE ? OR " +
+                "adresse ILIKE ? OR " +
+                "phone ILIKE ? OR " +
+                "birthdate::text ILIKE ?";
+
+
+        List<Client> foundClients = new ArrayList<>();
+
+        try {
+            PreparedStatement preparedStatement = conn.prepareStatement(searchQuery);
+
+            for (int i = 1; i <= 4; i++) {
+                preparedStatement.setString(i, "%" + searchValue2 + "%");
+            }
+
+            preparedStatement.setString(5, "%" + searchValue2 + "%");
+ //           preparedStatement.setString(6, "%" + searchValue2 + "%");
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                Client client = new Client();
+                client.setCode(resultSet.getInt("code"));
+                client.setName(resultSet.getString("name"));
+                client.setPrenoun(resultSet.getString("prenoun"));
+                client.setAdresse(resultSet.getString("adresse"));
+                client.setPhone(resultSet.getString("phone"));
+                client.setBirthDate(resultSet.getDate("birthdate").toLocalDate());
+                foundClients.add(client);
+
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return foundClients;
+
+    }
+
 }

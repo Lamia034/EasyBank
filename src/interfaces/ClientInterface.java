@@ -7,4 +7,5 @@ public interface ClientInterface {
     boolean deleteByCode(Integer deleteCode);
     List<Client> getAllClients();
     Client update(Client clientToUpdate);
+    List<Client> searchClient(String searchValue2);
 }
