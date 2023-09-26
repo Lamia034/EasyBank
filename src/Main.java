@@ -2,17 +2,17 @@ import helper.DatabaseConnection;
 import java.sql.Connection;
 import java.time.LocalDate;
 import java.util.Scanner;
-import dto.Account;
+import dto.SavingAccount;
 import dto.Affectation;
 import dto.Client;
 import dto.CurrentAccount;
-import dto.SavingAccount;
 import dto.Employee;
 import dto.Mission;
 import dto.Operation;
-import dto.Person;
 import implementations.EmployeeImplementation;
 import implementations.ClientImplementation;
+import implementations.CurrentAccountImplementation;
+import implementations.SavingAccountImplementation;
 import java.time.format.DateTimeFormatter;
 
 
@@ -24,6 +24,11 @@ public class Main {
     static EmployeeImplementation employeeI = new EmployeeImplementation();
     static Client client = new Client();
     static ClientImplementation clientI = new ClientImplementation();
+
+    static SavingAccount savingaccount = new SavingAccount();
+    static SavingAccountImplementation savingaccountI = new SavingAccountImplementation();
+    static CurrentAccount currentaccount = new CurrentAccount();
+    static CurrentAccountImplementation currentaccountI = new CurrentAccountImplementation();
 
     public static void main(String[] args) {
         DatabaseConnection dbConnection = DatabaseConnection.getInstance();
@@ -51,6 +56,8 @@ public class Main {
             System.out.println("10. Display all Clients");//done
             System.out.println("11. Update Client");//done
             System.out.println("12. Find Client by any of it's informations");//done
+            System.out.println("13. Add current account");//done
+            System.out.println("14. Add saving account");//done
 
             choice = scanner.nextInt();
             scanner.nextLine();
@@ -409,6 +416,81 @@ public class Main {
                         }
                     } else {
                         System.out.println("No client found with the provided information: " + searchValue2);
+                    }
+                    break;
+                case 13://add current account
+                    System.out.print("Enter the balance: ");
+                    currentaccount.setBalance(scanner.nextFloat());
+                    scanner.nextLine();
+
+                    System.out.println("Choose the account's status:");
+                    System.out.println("1. Actif");
+                    System.out.println("2. Inactif");
+
+                    int choiceS = scanner.nextInt();
+                    scanner.nextLine();
+
+
+                    switch (choiceS) {
+                        case 1:
+                            currentaccount.setStatus(CurrentAccount.AccountStatus.ACTIF);
+                            break;
+                        case 2:
+                            currentaccount.setStatus(CurrentAccount.AccountStatus.INACTIF);
+                            break;
+                        default:
+                            System.out.println("Invalid choice. Setting status to ACTIF by default.");
+                            currentaccount.setStatus(CurrentAccount.AccountStatus.ACTIF);
+                            break;
+                    }
+
+                    System.out.print("Enter the Overdraft: ");
+                    currentaccount.setOverdraft(scanner.nextFloat());
+                    scanner.nextLine();
+
+                    if (currentaccountI.add(currentaccount) != null) {
+                        System.out.println("Current account added successfully!:");
+                        System.out.println("account number: " + currentaccount.getNumber() + ",balance: " + currentaccount.getBalance() + ",Creation date: " + currentaccount.getCreationDate() + " status: " + currentaccount.getStatus() + ", Overdraft: " + currentaccount.getOverdraft()  );
+                    } else {
+                        System.out.println("Failed to add the account.");
+                    }
+                    break;
+
+                case 14://add saving account
+                    System.out.print("Enter the balance: ");
+                    savingaccount.setBalance(scanner.nextFloat());
+                    scanner.nextLine();
+
+                    System.out.println("Choose the account's status:");
+                    System.out.println("1. Actif");
+                    System.out.println("2. Inactif");
+
+                    int choiceSS = scanner.nextInt();
+                    scanner.nextLine();
+
+
+                    switch (choiceSS) {
+                        case 1:
+                            savingaccount.setStatus(SavingAccount.AccountStatus.ACTIF);
+                            break;
+                        case 2:
+                            savingaccount.setStatus(SavingAccount.AccountStatus.INACTIF);
+                            break;
+                        default:
+                            System.out.println("Invalid choice. Setting status to ACTIF by default.");
+                            savingaccount.setStatus(SavingAccount.AccountStatus.ACTIF);
+                            break;
+                    }
+
+                    System.out.print("Enter the Interest Rate: ");
+                    savingaccount.setInterestRate(scanner.nextFloat());
+                    scanner.nextLine();
+
+                    if (savingaccountI.add(savingaccount) != null) {
+                        System.out.println("saving account added successfully!:");
+                        System.out.println("account number: " + savingaccount.getNumber() + ",balance: " + savingaccount.getBalance() + ",Creation date: " + savingaccount.getCreationDate() + " status: " + savingaccount.getStatus() + ", Overdraft: " + savingaccount.getInterestRate()  );
+                    } else {
+                        System.out.println("Failed to add the account.");
                     }
                     break;
             }

@@ -54,7 +54,7 @@ public abstract class Account {
 
 
     public enum AccountStatus {
-        ACTIVE, INACTIVE; // Corrected enum values to follow naming conventions
+        ACTIF, INACTIF;
     }
 }
 
