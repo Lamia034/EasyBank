@@ -48,6 +48,7 @@ public class Main {
             System.out.println("7. Add Client");//done
              System.out.println("8. Find Client By Code");//done
             System.out.println("9. Delete Client");//done
+            System.out.println("10. Display all Clients");//done
 
             choice = scanner.nextInt();
             scanner.nextLine();
@@ -302,6 +303,26 @@ public class Main {
                         System.out.println("Client with Code " + deleteCode + " deleted successfully.");
                     } else {
                         System.out.println("Client with Code " + deleteCode + " not found or deletion failed.");
+                    }
+                    break;
+                case 10: // List ALL clients
+                    List<Client> allClients = clientI.getAllClients();
+
+                    if (allClients != null && !allClients.isEmpty()) {
+                        System.out.println("All Clients:");
+
+                        for (Client client : allClients) {
+                            System.out.println("Code: " + client.getCode());
+                            System.out.println("Name: " + client.getName());
+                            System.out.println("Prenoun: " + client.getPrenoun());
+                            System.out.println("adresse: " + client.getAdresse());
+                            System.out.println("Phone: " + client.getPhone());
+                            System.out.println("birth date: " + client.getBirthDate());
+
+                            System.out.println();
+                        }
+                    } else {
+                        System.out.println("No client found.");
                     }
                     break;
             }

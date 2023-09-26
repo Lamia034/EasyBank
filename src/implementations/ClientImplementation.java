@@ -9,6 +9,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 public class ClientImplementation implements ClientInterface {
     private DatabaseConnection db;
@@ -98,6 +100,35 @@ public class ClientImplementation implements ClientInterface {
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
+        }
+    }
+    public List<Client> getAllClients(){
+        Connection conn = db.getConnection();
+        String selectQuery = "SELECT * FROM client";
+        List<Client> clients = new ArrayList<>();
+
+        try {
+            PreparedStatement preparedStatement = conn.prepareStatement(selectQuery);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+
+
+            while (resultSet.next()) {
+                Client client = new Client();
+                client.setCode(resultSet.getInt("code"));
+                client.setName(resultSet.getString("name"));
+                client.setPrenoun(resultSet.getString("prenoun"));
+
+                client.setPhone(resultSet.getString("phone"));
+                client.setBirthDate(resultSet.getDate("birthdate").toLocalDate());
+                client.setAdresse(resultSet.getString("adresse"));
+                clients.add(client);
+            }
+
+            return clients;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 
