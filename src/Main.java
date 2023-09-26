@@ -46,9 +46,10 @@ public class Main {
             System.out.println("5. Update Employee");//done
             System.out.println("6. Find Employee By any of it's informations!");//done
             System.out.println("7. Add Client");//done
-             System.out.println("8. Find Client By Code");//done
+            System.out.println("8. Find Client By Code");//done
             System.out.println("9. Delete Client");//done
             System.out.println("10. Display all Clients");//done
+            System.out.println("11. Update Client");//done
 
             choice = scanner.nextInt();
             scanner.nextLine();
@@ -324,6 +325,72 @@ public class Main {
                     } else {
                         System.out.println("No client found.");
                     }
+                    break;
+                case 11://update client
+                    System.out.print("Enter the code to update client informations: ");
+                    Integer updateCode = Integer.valueOf(scanner.next());
+                    scanner.nextLine();
+                    try {
+
+                        Client clientToUpdate = clientI.searchByCode(updateCode);
+
+                        if (clientToUpdate != null) {
+                            System.out.println("client found:");
+                            System.out.println("Code: " + clientToUpdate.getCode());
+                            System.out.println("Name: " + clientToUpdate.getName());
+                            System.out.println("prenoun: " + clientToUpdate.getPrenoun());
+                            System.out.println("adresse: " + clientToUpdate.getAdresse());
+                            System.out.println("phone: " + clientToUpdate.getPhone());
+                            System.out.println("birth date: " + clientToUpdate.getBirthDate());
+                            System.out.println("Enter new client information (or leave blank to keep existing information):");
+
+                            System.out.print("Enter new name: ");
+                            String newName = scanner.nextLine();
+                            if (!newName.isEmpty()) {
+                                clientToUpdate.setName(newName);
+                            }
+
+                            System.out.print("Enter new prenoun: ");
+                            String newPrenoun = scanner.nextLine();
+                            if (!newPrenoun.isEmpty()) {
+                                clientToUpdate.setPrenoun(newPrenoun);
+                            }
+
+                            System.out.print("Enter new adresse: ");
+                            String newAdresse = scanner.nextLine();
+                            if (!newAdresse.isEmpty()) {
+                                clientToUpdate.setAdresse(newAdresse);
+                            }
+
+                            System.out.print("Enter new phone: ");
+                            String newPhone = scanner.nextLine();
+                            if (!newPhone.isEmpty()) {
+                                clientToUpdate.setPhone(newPhone);
+                            }
+
+                            System.out.print("Enter new birth date (yyyy-MM-dd): ");
+                            String newBirthDateStr = scanner.nextLine();
+                            if (!newBirthDateStr.isEmpty()) {
+                                LocalDate newBirthDate = LocalDate.parse(newBirthDateStr);
+                                clientToUpdate.setBirthDate(newBirthDate);
+                            }
+
+                            if (clientI.update(clientToUpdate) != null) {
+                                System.out.println("client updated successfully! with name:" + clientToUpdate.getName() + " , prenoun " + clientToUpdate.getPrenoun() + " , adresse " + clientToUpdate.getAdresse() + " , phone " + clientToUpdate.getPhone()  + " , birth date " + clientToUpdate.getBirthDate() );
+                            } else {
+                                System.out.println("Failed to update the client.");
+                            }
+                        } else {
+                            System.out.println("client not found with Number: " + updateCode);
+                        }
+
+
+                    } catch (NumberFormatException e) {
+                        System.out.println("Invalid input. Please enter a valid code.");
+                    }
+
+
+
                     break;
             }
 

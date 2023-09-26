@@ -132,4 +132,30 @@ public class ClientImplementation implements ClientInterface {
         }
     }
 
+
+    public Client update(Client clientToUpdate){
+        String updateQuery = "UPDATE client SET name = ?, prenoun = ?, adresse = ?, phone = ?, birthdate = ? WHERE code = ?";
+        try {
+            Connection conn = db.getConnection();
+            PreparedStatement preparedStatement = conn.prepareStatement(updateQuery);
+
+            preparedStatement.setString(1, clientToUpdate.getName());
+            preparedStatement.setString(2, clientToUpdate.getPrenoun());
+            preparedStatement.setString(3, clientToUpdate.getAdresse());
+            preparedStatement.setString(4, clientToUpdate.getPhone());
+
+            preparedStatement.setDate(5, java.sql.Date.valueOf(clientToUpdate.getBirthDate()));
+            preparedStatement.setInt(6, clientToUpdate.getCode());
+            int rowsUpdated = preparedStatement.executeUpdate();
+
+            if (rowsUpdated > 0) {
+                return clientToUpdate;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
 }
