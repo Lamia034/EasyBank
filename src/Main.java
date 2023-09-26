@@ -3,16 +3,13 @@ import java.sql.Connection;
 import java.time.LocalDate;
 import java.util.Scanner;
 import dto.SavingAccount;
-import dto.Affectation;
 import dto.Client;
 import dto.CurrentAccount;
 import dto.Employee;
-import dto.Mission;
-import dto.Operation;
 import implementations.EmployeeImplementation;
 import implementations.ClientImplementation;
-import implementations.CurrentAccountImplementation;
-import implementations.SavingAccountImplementation;
+import implementations.AccountImplementation;
+
 import java.time.format.DateTimeFormatter;
 
 
@@ -25,10 +22,9 @@ public class Main {
     static Client client = new Client();
     static ClientImplementation clientI = new ClientImplementation();
 
-    static SavingAccount savingaccount = new SavingAccount();
-    static SavingAccountImplementation savingaccountI = new SavingAccountImplementation();
     static CurrentAccount currentaccount = new CurrentAccount();
-    static CurrentAccountImplementation currentaccountI = new CurrentAccountImplementation();
+    static SavingAccount savingaccount = new SavingAccount();
+    static AccountImplementation accountI = new AccountImplementation();
 
     public static void main(String[] args) {
         DatabaseConnection dbConnection = DatabaseConnection.getInstance();
@@ -58,6 +54,7 @@ public class Main {
             System.out.println("12. Find Client by any of it's informations");//done
             System.out.println("13. Add current account");//done
             System.out.println("14. Add saving account");//done
+            System.out.println("15. Delete account");//done
 
             choice = scanner.nextInt();
             scanner.nextLine();
@@ -448,7 +445,7 @@ public class Main {
                     currentaccount.setOverdraft(scanner.nextFloat());
                     scanner.nextLine();
 
-                    if (currentaccountI.add(currentaccount) != null) {
+                    if (accountI.addcurrent(currentaccount) != null) {
                         System.out.println("Current account added successfully!:");
                         System.out.println("account number: " + currentaccount.getNumber() + ",balance: " + currentaccount.getBalance() + ",Creation date: " + currentaccount.getCreationDate() + " status: " + currentaccount.getStatus() + ", Overdraft: " + currentaccount.getOverdraft()  );
                     } else {
@@ -486,11 +483,24 @@ public class Main {
                     savingaccount.setInterestRate(scanner.nextFloat());
                     scanner.nextLine();
 
-                    if (savingaccountI.add(savingaccount) != null) {
+                    if (accountI.addsaving(savingaccount) != null) {
                         System.out.println("saving account added successfully!:");
                         System.out.println("account number: " + savingaccount.getNumber() + ",balance: " + savingaccount.getBalance() + ",Creation date: " + savingaccount.getCreationDate() + " status: " + savingaccount.getStatus() + ", Overdraft: " + savingaccount.getInterestRate()  );
                     } else {
                         System.out.println("Failed to add the account.");
+                    }
+                    break;
+                case 15://dalete account
+                    System.out.print("Enter account's number to delete: ");
+                    Integer deleteNumber = scanner.nextInt();
+                    scanner.nextLine();
+
+                    boolean deletedacc = accountI.deleteByNumber(deleteNumber);
+
+                    if (deletedacc) {
+                        System.out.println("account with number " + deleteNumber + " deleted successfully.");
+                    } else {
+                        System.out.println("account with number " + deleteNumber + " not found or deletion failed.");
                     }
                     break;
             }
