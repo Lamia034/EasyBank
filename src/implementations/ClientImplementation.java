@@ -1,4 +1,5 @@
 package implementations;
+import dto.Employee;
 import interfaces.ClientInterface;
 import helper.DatabaseConnection;
 import dto.Client;
@@ -56,6 +57,31 @@ public class ClientImplementation implements ClientInterface {
                 return null; // Exception occurred
             }
         }
-//hi
+    public Client searchByCode(Integer searchCode){
+        try {
+            Connection conn = db.getConnection();
+            String searchQuery = "SELECT * FROM client WHERE code = ?";
+
+            try (PreparedStatement preparedStatement = conn.prepareStatement(searchQuery)) {
+                preparedStatement.setInt(1, searchCode);
+
+                ResultSet resultSet = preparedStatement.executeQuery();
+
+                if (resultSet.next()) {
+                    Integer foundCode = resultSet.getInt("code");
+                    String name = resultSet.getString("name");
+                    String prenoun = resultSet.getString("prenoun");
+                    String adresse = resultSet.getString("adresse");
+                    String phone = resultSet.getString("phone");
+                    LocalDate birthdate = resultSet.getDate("birthdate").toLocalDate();
+                    return new Client(name, prenoun, birthdate, phone, foundCode, adresse);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 
 }

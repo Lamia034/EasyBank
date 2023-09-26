@@ -211,12 +211,7 @@ public class EmployeeImplementation implements EmployeeInterface{
                 employee.setHiringDate(resultSet.getDate("hiringdate").toLocalDate());
 
                 foundEmployees.add(employee);
-                //hello world
-                //hello world
-                //hello
-                //hi
-                //hii
-                //hi
+
             }
         } catch (SQLException e) {
             e.printStackTrace();

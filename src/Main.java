@@ -44,8 +44,10 @@ public class Main {
             System.out.println("3. Dalete Employee");//done
             System.out.println("4. List all Employees");//done
             System.out.println("5. Update Employee");//done
-            System.out.println("6. Find Employee By any of it's informations!");
-            System.out.println(". Add Client");//done
+            System.out.println("6. Find Employee By any of it's informations!");//done
+
+            System.out.println("7. Add Client");//done
+             System.out.println("8. Find Client By Code");
 
             choice = scanner.nextInt();
             scanner.nextLine();
@@ -234,7 +236,8 @@ public class Main {
                     }
                     break;
 
-                case 30: // Add Client
+
+                case 7: // Add Client
                     System.out.print("Enter client name: ");
                     client.setName(scanner.nextLine());
 
@@ -267,6 +270,25 @@ public class Main {
                         System.out.println("name: " + client.getName() + ",prenoun: " + client.getPrenoun() + ",Birth date: " + client.getBirthDate() + " phone: " + client.getPhone()  + " code: " + client.getCode() + " adresse: " + client.getAdresse());
                     } else {
                         System.out.println("Failed to add the employee.");
+                    }
+                    break;
+                case 8://Find Client
+                    System.out.print("Enter client code to search: ");
+                    Integer searchCode = scanner.nextInt();
+                    scanner.nextLine();
+
+                    Client foundClient = clientI.searchByCode(searchCode);
+
+                    if (foundClient != null) {
+                        System.out.println("Found client:");
+                        System.out.println("Code: " + foundClient.getCode());
+                        System.out.println("Name: " + foundClient.getName());
+                        System.out.println("Prenoun: " + foundClient.getPrenoun());
+                        System.out.println("birth date: " + foundClient.getBirthDate());
+                        System.out.println("Adresse: " + foundClient.getAdresse());
+                        System.out.println("Phone: " + foundClient.getPhone());
+                    } else {
+                        System.out.println("Client not found with Code: " + searchCode);
                     }
                     break;
             }
