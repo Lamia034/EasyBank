@@ -45,9 +45,9 @@ public class Main {
             System.out.println("4. List all Employees");//done
             System.out.println("5. Update Employee");//done
             System.out.println("6. Find Employee By any of it's informations!");//done
-
             System.out.println("7. Add Client");//done
-             System.out.println("8. Find Client By Code");
+             System.out.println("8. Find Client By Code");//done
+            System.out.println("9. Delete Client");//done
 
             choice = scanner.nextInt();
             scanner.nextLine();
@@ -289,6 +289,19 @@ public class Main {
                         System.out.println("Phone: " + foundClient.getPhone());
                     } else {
                         System.out.println("Client not found with Code: " + searchCode);
+                    }
+                    break;
+                case 9://dalete client
+                    System.out.print("Enter client code to delete: ");
+                    Integer deleteCode = scanner.nextInt();
+                    scanner.nextLine();
+
+                    boolean deletedc = clientI.deleteByCode(deleteCode);
+
+                    if (deletedc) {
+                        System.out.println("Client with Code " + deleteCode + " deleted successfully.");
+                    } else {
+                        System.out.println("Client with Code " + deleteCode + " not found or deletion failed.");
                     }
                     break;
             }

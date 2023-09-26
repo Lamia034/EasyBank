@@ -83,5 +83,22 @@ public class ClientImplementation implements ClientInterface {
 
         return null;
     }
+    public boolean deleteByCode(Integer deleteCode){
+        Connection conn = db.getConnection();
+        String deleteQuery = "DELETE FROM client WHERE code = ?";
+
+        try {
+            PreparedStatement preparedStatement = conn.prepareStatement(deleteQuery);
+
+            preparedStatement.setInt(1, deleteCode);
+
+            int rowsDeleted = preparedStatement.executeUpdate();
+
+            return rowsDeleted > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
 }
