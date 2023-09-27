@@ -1,11 +1,9 @@
+import dto.*;
 import helper.DatabaseConnection;
 import java.sql.Connection;
 import java.time.LocalDate;
 import java.util.Scanner;
-import dto.SavingAccount;
-import dto.Client;
-import dto.CurrentAccount;
-import dto.Employee;
+
 import implementations.EmployeeImplementation;
 import implementations.ClientImplementation;
 import implementations.AccountImplementation;
@@ -55,6 +53,7 @@ public class Main {
             System.out.println("13. Add current account");//done
             System.out.println("14. Add saving account");//done
             System.out.println("15. Delete account");//done
+            System.out.println("16. find account by client");//done
 
             choice = scanner.nextInt();
             scanner.nextLine();
@@ -504,7 +503,7 @@ public class Main {
                     savingaccount.setInterestRate(scanner.nextFloat());
                     scanner.nextLine();
 
-                    if (accountI.addsaving(employeeMatricule,clientCode,savingaccount) != null) {
+                    if (accountI.addsaving(employeeMatriculee,clientCodee,savingaccount) != null) {
                         System.out.println("saving account added successfully!:");
                         System.out.println("account number: " + savingaccount.getNumber() + ",balance: " + savingaccount.getBalance() + ",Creation date: " + savingaccount.getCreationDate() + " status: " + savingaccount.getStatus() + ", Overdraft: " + savingaccount.getInterestRate()  );
                     } else {
@@ -524,6 +523,47 @@ public class Main {
                         System.out.println("account with number " + deleteNumber + " not found or deletion failed.");
                     }
                     break;
+                case 16: // Find account by Client
+                    System.out.print("Enter client code to find his account: ");
+                    Integer searchCode2 = scanner.nextInt();
+                    scanner.nextLine();
+
+                    List<Account> foundAccounts = accountI.searchByCode(searchCode2);
+
+                    if (!foundAccounts.isEmpty()) {
+                        System.out.println("Found account(s):");
+                        for (Account foundAccount : foundAccounts) {
+                            if (foundAccount instanceof CurrentAccount) {
+                               CurrentAccount currentAccount = (CurrentAccount) foundAccount;
+                                System.out.println("Current Account:");
+                                System.out.println("number: " + currentAccount.getNumber());
+                                System.out.println("balance: " + currentAccount.getBalance());
+                                System.out.println("creation date: " + currentAccount.getCreationDate());
+                                System.out.println("status: " + currentAccount.getStatus());
+                                System.out.println("overdraft: " + currentAccount.getOverdraft());
+                                System.out.println("matricule: " + currentAccount.getEmployee().getMatricule());
+                                System.out.println("code: " + currentAccount.getClient().getCode());
+
+
+                                System.out.println();
+                            } else {
+                                SavingAccount savingAccount = (SavingAccount) foundAccount;
+                                System.out.println("Other Account Type:");
+                                System.out.println("number: " + savingAccount.getNumber());
+                                System.out.println("balance: " + savingAccount.getBalance());
+                                System.out.println("creation date: " + savingAccount.getCreationDate());
+                                System.out.println("status: " + savingAccount.getStatus());
+                                System.out.println("interest rate: " + savingAccount.getInterestRate());
+                                System.out.println("matricule: " + savingAccount.getEmployee().getMatricule());
+                                System.out.println("code: " + savingAccount.getClient().getCode());
+                                System.out.println();
+                            }
+                        }
+                    } else {
+                        System.out.println("No accounts found with Code: " + searchCode2);
+                    }
+                    break;
+
             }
 
         } while (!exit);
