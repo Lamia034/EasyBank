@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 public class ClientImplementation implements ClientInterface {
     private DatabaseConnection db;
@@ -28,13 +29,13 @@ public class ClientImplementation implements ClientInterface {
         }*/
 
         @Override
-        public Client add(Client client) {
+    //    public Client add(Client client) {
             // Generate a random matricule
           /*  Integer generatedCode = generateUniqueCode();
             client.setCode(generatedCode);*/
 
 
-            try {
+  /*          try {
                 Connection connection = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(
                         "INSERT INTO client ( name, prenoun, birthDate, phone, adresse) " +
@@ -58,7 +59,35 @@ public class ClientImplementation implements ClientInterface {
                 e.printStackTrace();
                 return null; // Exception occurred
             }
+        }*/
+
+
+    public Optional<Client> add(Client client) {
+        try {
+            Connection connection = DatabaseConnection.getInstance().getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    "INSERT INTO client ( name, prenoun, birthDate, phone, adresse) " +
+                            "VALUES ( ?, ?, ?, ?, ?)"
+            );
+
+            preparedStatement.setString(1, client.getName());
+            preparedStatement.setString(2, client.getPrenoun());
+            preparedStatement.setDate(3, java.sql.Date.valueOf(client.getBirthDate()));
+            preparedStatement.setString(4, client.getPhone());
+            preparedStatement.setString(5, client.getAdresse());
+
+            int affectedRows = preparedStatement.executeUpdate();
+            if (affectedRows == 1) {
+                return Optional.of(client); // Return an Optional containing the inserted client
+            } else {
+                return Optional.empty(); // Insert failed, return an empty Optional
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return Optional.empty(); // Exception occurred, return an empty Optional
         }
+    }
+
     public Client searchByCode(Integer searchCode){
         try {
             Connection conn = db.getConnection();

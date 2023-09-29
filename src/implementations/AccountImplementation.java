@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class AccountImplementation implements AccountInterface {
     private DatabaseConnection db;
@@ -248,6 +249,110 @@ public class AccountImplementation implements AccountInterface {
 
         return accounts;
     }
+
+    @Override
+    public List<Optional<Account>> getAllAccounts() {
+        List<Optional<Account>> accounts = new ArrayList<>();
+
+        try (Connection conn = db.getConnection()) {
+            String query = "SELECT a.number, a.balance, a.creationdate, a.accountstatus, a.matricule, a.code, ca.overdraft ,sa.interestrate " +
+                    "FROM account a " +
+                    "LEFT JOIN savingaccount sa ON a.number = sa.number " +
+                    "LEFT JOIN currentaccount ca ON a.number = ca.number";
+
+
+            try (PreparedStatement preparedStatement = conn.prepareStatement(query)) {
+                ResultSet resultSet = preparedStatement.executeQuery();
+
+                while (resultSet.next()) {
+                    int accountNumber = resultSet.getInt("number");
+                    float balance = resultSet.getFloat("balance");
+                    LocalDate creationDate = resultSet.getDate("creationdate").toLocalDate();
+                    Account.AccountStatus status = Account.AccountStatus.valueOf(resultSet.getString("accountstatus"));
+                    String matricule = resultSet.getString("matricule");
+                    int code = resultSet.getInt("code");
+
+                    Optional<Account> optionalAccount = Optional.empty();
+
+                    // Now, you can check if this account exists in the SavingAccount or CurrentAccount table
+                    // and create the appropriate object accordingly
+                    if (isInSavingAccount(accountNumber)) {
+                        SavingAccount savingAccount = new SavingAccount();
+                        savingAccount.setNumber(accountNumber);
+                        savingAccount.setBalance(balance);
+                        savingAccount.setCreationDate(creationDate);
+                        savingAccount.setStatus(status);
+                        Employee employee = new Employee();
+                        employee.setMatricule(matricule);
+                        savingAccount.setEmployee(employee);
+                        Client client = new Client();
+                        client.setCode(code);
+                        savingAccount.setClient(client);
+
+                        float interestRate = resultSet.getFloat("interestrate");
+                        savingAccount.setInterestRate(interestRate);
+
+                        optionalAccount = Optional.of(savingAccount);
+                    } else if (isInCurrentAccount(accountNumber)) {
+                        CurrentAccount currentAccount = new CurrentAccount();
+                        currentAccount.setNumber(accountNumber);
+                        currentAccount.setBalance(balance);
+                        currentAccount.setCreationDate(creationDate);
+                        currentAccount.setStatus(status);
+                        Employee employee = new Employee();
+                        employee.setMatricule(matricule);
+                        currentAccount.setEmployee(employee);
+                        Client client = new Client();
+                        client.setCode(code);
+                        currentAccount.setClient(client);
+
+                        float overdraft = resultSet.getFloat("overdraft");
+                        currentAccount.setOverdraft(overdraft);
+
+                        optionalAccount = Optional.of(currentAccount);
+                    }
+
+                    accounts.add(optionalAccount);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return accounts;
+    }
+
+    // Helper methods to check if an account exists in the child tables
+    private boolean isInSavingAccount(int accountNumber) {
+        try (Connection conn = db.getConnection()) {
+            String query = "SELECT 1 FROM savingaccount WHERE number = ?";
+            try (PreparedStatement preparedStatement = conn.prepareStatement(query)) {
+                preparedStatement.setInt(1, accountNumber);
+                ResultSet resultSet = preparedStatement.executeQuery();
+                return resultSet.next(); // Returns true if the account exists in savingaccount table
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false; // Return false in case of any exception
+        }
+    }
+
+    private boolean isInCurrentAccount(int accountNumber) {
+        try (Connection conn = db.getConnection()) {
+            String query = "SELECT 1 FROM currentaccount WHERE number = ?";
+            try (PreparedStatement preparedStatement = conn.prepareStatement(query)) {
+                preparedStatement.setInt(1, accountNumber);
+                ResultSet resultSet = preparedStatement.executeQuery();
+                return resultSet.next(); // Returns true if the account exists in currentaccount table
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false; // Return false in case of any exception
+        }
+    }
+
+
+
 
 
 

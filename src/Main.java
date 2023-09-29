@@ -2,6 +2,8 @@ import dto.*;
 import helper.DatabaseConnection;
 import java.sql.Connection;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+import java.util.Optional;
 import java.util.Scanner;
 
 import implementations.EmployeeImplementation;
@@ -12,6 +14,7 @@ import java.time.format.DateTimeFormatter;
 
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class Main {
@@ -54,6 +57,9 @@ public class Main {
             System.out.println("14. Add saving account");//done
             System.out.println("15. Delete account");//done
             System.out.println("16. find account by client");//done
+            System.out.println("17. display all accounts");//done
+            System.out.println("18. display accounts by status");//done
+            System.out.println("19. display accounts by creation date");//done
 
             choice = scanner.nextInt();
             scanner.nextLine();
@@ -72,7 +78,7 @@ public class Main {
                     try {
                         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
                         birthDate = LocalDate.parse(birthDateStr, dateFormatter);
-                    } catch (java.time.format.DateTimeParseException e) {
+                    } catch (DateTimeParseException e) {
                         System.err.println("Invalid date format. Please use dd-MM-yyyy.");
                         break;
                     }
@@ -243,7 +249,7 @@ public class Main {
                     break;
 
 
-                case 7: // Add Client
+           /*     case 7: // Add Client
                     System.out.print("Enter client name: ");
                     client.setName(scanner.nextLine());
 
@@ -277,7 +283,44 @@ public class Main {
                     } else {
                         System.out.println("Failed to add the employee.");
                     }
+                    break;*/
+                case 7: // Add Client
+                    System.out.print("Enter client name: ");
+                    client.setName(scanner.nextLine());
+
+                    System.out.print("Enter client prenoun: ");
+                    client.setPrenoun(scanner.nextLine());
+
+                    System.out.print("Enter client birth date (dd-MM-yyyy): ");
+                    String birthDateStrr = scanner.nextLine();
+                    LocalDate clientBirthDate = null;
+
+                    try {
+                        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+                        clientBirthDate = LocalDate.parse(birthDateStrr, dateFormatter);
+                    } catch (DateTimeParseException e) {
+                        System.err.println("Invalid date format. Please use dd-MM-yyyy.");
+                        break;
+                    }
+
+                    client.setBirthDate(clientBirthDate);
+
+                    System.out.print("Enter client Phone: ");
+                    client.setPhone(scanner.nextLine());
+
+                    System.out.print("Enter adresse : ");
+                    client.setAdresse(scanner.nextLine());
+
+                    Optional<Client> addResult = clientI.add(client);
+                    if (addResult.isPresent()) {
+                        Client addedClient = addResult.get();
+                        System.out.println("Client added successfully!:");
+                        System.out.println("name: " + addedClient.getName() + ",prenoun: " + addedClient.getPrenoun() + ",Birth date: " + addedClient.getBirthDate() + " phone: " + addedClient.getPhone()  + " code: " + addedClient.getCode() + " adresse: " + addedClient.getAdresse());
+                    } else {
+                        System.out.println("Failed to add the client.");
+                    }
                     break;
+
                 case 8://Find Client
                     System.out.print("Enter client code to search: ");
                     Integer searchCode = scanner.nextInt();
@@ -563,6 +606,95 @@ public class Main {
                         System.out.println("No accounts found with Code: " + searchCode2);
                     }
                     break;
+
+                case 17: // List ALL accounts
+                    List<Optional<Account>> allAccounts = accountI.getAllAccounts();
+
+                    if (allAccounts != null && !allAccounts.isEmpty()) {
+                        System.out.println("All account(s):");
+                        for (Optional<Account> optionalAccount : allAccounts) {
+                            if (optionalAccount.isPresent()) {
+                                Account account = optionalAccount.get();
+                                if (account instanceof SavingAccount) {
+                                    SavingAccount savingAccount = (SavingAccount) account;
+                                    System.out.println("Saving Account:");
+                                    System.out.println("number: " + savingAccount.getNumber());
+                                    System.out.println("balance: " + savingAccount.getBalance());
+                                    System.out.println("creation date: " + savingAccount.getCreationDate());
+                                    System.out.println("status: " + savingAccount.getStatus());
+                                    System.out.println("interest rate: " + savingAccount.getInterestRate());
+                                    System.out.println("matricule: " + savingAccount.getEmployee().getMatricule());
+                                    System.out.println("code: " + savingAccount.getClient().getCode());
+                                    System.out.println();
+                                } else if (account instanceof CurrentAccount) {
+                                    CurrentAccount currentAccount = (CurrentAccount) account;
+                                    System.out.println("Current Account:");
+                                    System.out.println("number: " + currentAccount.getNumber());
+                                    System.out.println("balance: " + currentAccount.getBalance());
+                                    System.out.println("creation date: " + currentAccount.getCreationDate());
+                                    System.out.println("status: " + currentAccount.getStatus());
+                                    System.out.println("overdraft: " + currentAccount.getOverdraft());
+                                    System.out.println("matricule: " + currentAccount.getEmployee().getMatricule());
+                                    System.out.println("code: " + currentAccount.getClient().getCode());
+                                    System.out.println();
+                                }
+                            }
+                        }
+                    } else {
+                        System.out.println("No accounts found.");
+                    }
+                    break;
+                case 18:
+
+
+                    List<Optional<Account>> allAccounts2 = accountI.getAllAccounts();
+
+                    System.out.println("Choose an account status to filter by:");
+                    System.out.println("1. ACTIVE");
+                    System.out.println("2. INACTIVE");
+
+
+                    int choice3 = scanner.nextInt();
+                    scanner.nextLine();
+                    Account.AccountStatus desiredStatus;
+                    switch (choice3) {
+                        case 1:
+                            desiredStatus = Account.AccountStatus.ACTIF;
+                            break;
+                        case 2:
+                            desiredStatus = Account.AccountStatus.INACTIF;
+                            break;
+                        default:
+                            System.out.println("Invalid choice. Defaulting to ACTIVE.");
+                            desiredStatus = Account.AccountStatus.ACTIF;
+                            break;
+                    }
+
+                    List<Account> filteredAccounts = allAccounts2.stream()
+                            .filter(optionalAccount -> optionalAccount.isPresent()) // Filter out empty optionals
+                            .map(Optional::get) // Get the Account from the Optional
+                            .filter(account -> account.getStatus() == desiredStatus)
+                            .collect(Collectors.toList());
+
+
+                    if (!filteredAccounts.isEmpty()) {
+                        System.out.println("Accounts with status " + desiredStatus + ":");
+                        for (Account account : filteredAccounts) {
+                            System.out.println("Number: " + account.getNumber());
+                            System.out.println("Balance: " + account.getBalance());
+                            System.out.println("matricule: " + account.getEmployee().getMatricule());
+                            System.out.println("code: " + account.getClient().getCode());
+
+                            System.out.println();
+                        }
+                    }else{
+                        System.out.println("no account found with this status");
+                    }
+                    break;
+
+
+
+
 
             }
 
