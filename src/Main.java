@@ -644,7 +644,7 @@ public class Main {
                         System.out.println("No accounts found.");
                     }
                     break;
-                case 18:
+                case 18://filter accounts by choosen status
 
 
                     List<Optional<Account>> allAccounts2 = accountI.getAllAccounts();
