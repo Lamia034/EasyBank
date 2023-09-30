@@ -695,6 +695,40 @@ public class Main {
 
 
 
+                case 19:
+                    List<Optional<Account>> allAccounts4 = accountI.getAllAccounts();
+                    
+                    System.out.print("Enter a date (yyyy-MM-dd): ");
+                    String inputDate = scanner.nextLine();
+
+                    LocalDate desiredDate;
+                    try {
+                        desiredDate = LocalDate.parse(inputDate);
+                    } catch (DateTimeParseException e) {
+                        System.out.println("Invalid date format. Please use yyyy-MM-dd.");
+                        break;
+                    }
+
+                    List<Account> accountsByDate = allAccounts4.stream()
+                            .filter(Optional::isPresent)
+                            .map(Optional::get)
+                            .filter(account -> account.getCreationDate().equals(desiredDate))
+                            .collect(Collectors.toList());
+
+                    if (!accountsByDate.isEmpty()) {
+                        System.out.println("Accounts created on " + desiredDate + ":");
+                        for (Account account : accountsByDate) {
+                            System.out.println("Number: " + account.getNumber());
+                            System.out.println("Balance: " + account.getBalance());
+                            System.out.println("Creation Date: " + account.getCreationDate());
+                            System.out.println("matricule: " + account.getEmployee().getMatricule());
+                            System.out.println("code: " + account.getClient().getCode());
+                            System.out.println();
+                        }
+                    } else {
+                        System.out.println("No accounts found for the specified date.");
+                    }
+                    break;
 
             }
 
