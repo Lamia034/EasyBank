@@ -727,28 +727,10 @@ public class Main {
                         System.out.println("No accounts found for the specified date.");
                     }
                     break;
-                case 20:
+                case 20://change account status
                     List<Optional<Account>> allAccounts5 = accountI.getAllAccounts();
                     System.out.print("Enter the account number: ");
                     int accountNumberToChangeStatus = scanner.nextInt();
-                    System.out.println("Choose an account status to change:");
-                    System.out.println("1. ACTIVE");
-                    System.out.println("2. INACTIVE");
-                    int choice4 = scanner.nextInt();
-                    scanner.nextLine();
-                    Account.AccountStatus changeAccountStatus;
-                    switch (choice4) {
-                        case 1:
-                            changeAccountStatus = Account.AccountStatus.ACTIF;
-                            break;
-                        case 2:
-                            changeAccountStatus = Account.AccountStatus.INACTIF;
-                            break;
-                        default:
-                            System.out.println("Invalid choice. Defaulting to ACTIVE.");
-                            changeAccountStatus = Account.AccountStatus.ACTIF;
-                            break;
-                    }
 
                     Optional<Account> accountToChangeStatus = allAccounts5.stream()
                             .filter(Optional::isPresent)
@@ -757,17 +739,43 @@ public class Main {
                             .findFirst();
 
                     if (accountToChangeStatus.isPresent()) {
-                        // Update the status directly
                         Account account = accountToChangeStatus.get();
-                        account.setStatus(changeAccountStatus);
-                        System.out.println("Account status changed successfully.");
+                        System.out.println("Account number: " + account.getNumber());
+                        System.out.println("Account status: " + account.getStatus());
+                        System.out.println("Choose an account status to change:");
+                        System.out.println("1. ACTIVE");
+                        System.out.println("2. INACTIVE");
+                        int choice4 = scanner.nextInt();
+                        scanner.nextLine();
+                        Account.AccountStatus changeAccountStatus;
+                        switch (choice4) {
+                            case 1:
+                                changeAccountStatus = Account.AccountStatus.ACTIF;
+                                break;
+                            case 2:
+                                changeAccountStatus = Account.AccountStatus.INACTIF;
+                                break;
+                            default:
+                                System.out.println("Invalid choice. Defaulting to ACTIVE.");
+                                changeAccountStatus = Account.AccountStatus.ACTIF;
+                                break;
+                        }
 
-                        // Optionally, you can update the status in the database here if needed
-                        // updateAccountStatusInDatabase(account);
+
+                        account.setStatus(changeAccountStatus);
+
+                        Optional<Account> updatedAccount = accountI.updateAccount(account);
+
+                        if (updatedAccount.isPresent()) {
+                            System.out.println("Account status updated successfully.");
+                        } else {
+                            System.out.println("Failed to update account status.");
+                        }
                     } else {
-                        System.out.println("Account not found with the specified number.");
+                        System.out.println("Account not found.");
                     }
                     break;
+
                 case 21://update account by his number
                     List<Optional<Account>> allAccounts6 = accountI.getAllAccounts();
                     System.out.println("Enter the account number:");
