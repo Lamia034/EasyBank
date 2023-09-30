@@ -322,18 +322,76 @@ public class AccountImplementation implements AccountInterface {
         return accounts;
     }
 
-    // Helper methods to check if an account exists in the child tables
+    @Override
+    public Optional<Account> updateAccount(Account account) {
+        try (Connection conn = db.getConnection()) {
+            conn.setAutoCommit(false);
+
+            String accountQuery = "UPDATE account SET balance = ?, matricule = ?, code = ?, creationdate = ?, accountstatus = ? WHERE number = ?";
+            try (PreparedStatement accountStatement = conn.prepareStatement(accountQuery)) {
+                accountStatement.setFloat(1, account.getBalance());
+                accountStatement.setString(2, account.getEmployee().getMatricule());
+                accountStatement.setInt(3, account.getClient().getCode());
+                accountStatement.setDate(4, java.sql.Date.valueOf(account.getCreationDate()));
+                accountStatement.setString(5, account.getStatus().name());
+                accountStatement.setInt(6, account.getNumber());
+
+                int accountRowsUpdated = accountStatement.executeUpdate();
+
+                if (accountRowsUpdated > 0) {
+                    if (account instanceof CurrentAccount) {
+                        String currentAccountQuery = "UPDATE currentaccount SET overdraft = ? WHERE number = ?";
+                        try (PreparedStatement currentAccountStatement = conn.prepareStatement(currentAccountQuery)) {
+                            CurrentAccount currentAccount = (CurrentAccount) account;
+                            currentAccountStatement.setFloat(1, currentAccount.getOverdraft());
+                            currentAccountStatement.setInt(2, account.getNumber());
+
+                            int currentAccountRowsUpdated = currentAccountStatement.executeUpdate();
+
+
+                            if (currentAccountRowsUpdated > 0) {
+                                conn.commit();
+                                return Optional.of(account);
+                            }
+                        }
+                    } else if (account instanceof SavingAccount) {
+                        String savingAccountQuery = "UPDATE savingaccount SET interestrate = ? WHERE number = ?";
+                        try (PreparedStatement savingAccountStatement = conn.prepareStatement(savingAccountQuery)) {
+                            SavingAccount savingAccount = (SavingAccount) account;
+                            savingAccountStatement.setFloat(1, savingAccount.getInterestRate());
+                            savingAccountStatement.setInt(2, account.getNumber());
+
+                            int savingAccountRowsUpdated = savingAccountStatement.executeUpdate();
+
+
+                            if (savingAccountRowsUpdated > 0) {
+                                conn.commit();
+                                return Optional.of(account);
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return Optional.empty();
+    }
+
+
+
+
     private boolean isInSavingAccount(int accountNumber) {
         try (Connection conn = db.getConnection()) {
             String query = "SELECT 1 FROM savingaccount WHERE number = ?";
             try (PreparedStatement preparedStatement = conn.prepareStatement(query)) {
                 preparedStatement.setInt(1, accountNumber);
                 ResultSet resultSet = preparedStatement.executeQuery();
-                return resultSet.next(); // Returns true if the account exists in savingaccount table
+                return resultSet.next();
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            return false; // Return false in case of any exception
+            return false;
         }
     }
 
@@ -343,11 +401,11 @@ public class AccountImplementation implements AccountInterface {
             try (PreparedStatement preparedStatement = conn.prepareStatement(query)) {
                 preparedStatement.setInt(1, accountNumber);
                 ResultSet resultSet = preparedStatement.executeQuery();
-                return resultSet.next(); // Returns true if the account exists in currentaccount table
+                return resultSet.next();
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            return false; // Return false in case of any exception
+            return false;
         }
     }
 

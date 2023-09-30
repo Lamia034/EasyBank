@@ -60,6 +60,8 @@ public class Main {
             System.out.println("17. display all accounts");//done
             System.out.println("18. display accounts by status");//done
             System.out.println("19. display accounts by creation date");//done
+            System.out.println("20. change account status ");//done with stream api and lambda expression
+            System.out.println("21. update account ");//done
 
             choice = scanner.nextInt();
             scanner.nextLine();
@@ -645,15 +647,11 @@ public class Main {
                     }
                     break;
                 case 18://filter accounts by choosen status
-
-
                     List<Optional<Account>> allAccounts2 = accountI.getAllAccounts();
 
                     System.out.println("Choose an account status to filter by:");
                     System.out.println("1. ACTIVE");
                     System.out.println("2. INACTIVE");
-
-
                     int choice3 = scanner.nextInt();
                     scanner.nextLine();
                     Account.AccountStatus desiredStatus;
@@ -695,9 +693,9 @@ public class Main {
 
 
 
-                case 19:
+                case 19:// filter accounts by creation date
                     List<Optional<Account>> allAccounts4 = accountI.getAllAccounts();
-                    
+
                     System.out.print("Enter a date (yyyy-MM-dd): ");
                     String inputDate = scanner.nextLine();
 
@@ -729,6 +727,142 @@ public class Main {
                         System.out.println("No accounts found for the specified date.");
                     }
                     break;
+                case 20:
+                    List<Optional<Account>> allAccounts5 = accountI.getAllAccounts();
+                    System.out.print("Enter the account number: ");
+                    int accountNumberToChangeStatus = scanner.nextInt();
+                    System.out.println("Choose an account status to change:");
+                    System.out.println("1. ACTIVE");
+                    System.out.println("2. INACTIVE");
+                    int choice4 = scanner.nextInt();
+                    scanner.nextLine();
+                    Account.AccountStatus changeAccountStatus;
+                    switch (choice4) {
+                        case 1:
+                            changeAccountStatus = Account.AccountStatus.ACTIF;
+                            break;
+                        case 2:
+                            changeAccountStatus = Account.AccountStatus.INACTIF;
+                            break;
+                        default:
+                            System.out.println("Invalid choice. Defaulting to ACTIVE.");
+                            changeAccountStatus = Account.AccountStatus.ACTIF;
+                            break;
+                    }
+
+                    Optional<Account> accountToChangeStatus = allAccounts5.stream()
+                            .filter(Optional::isPresent)
+                            .map(Optional::get)
+                            .filter(account -> account.getNumber() == accountNumberToChangeStatus)
+                            .findFirst();
+
+                    if (accountToChangeStatus.isPresent()) {
+                        // Update the status directly
+                        Account account = accountToChangeStatus.get();
+                        account.setStatus(changeAccountStatus);
+                        System.out.println("Account status changed successfully.");
+
+                        // Optionally, you can update the status in the database here if needed
+                        // updateAccountStatusInDatabase(account);
+                    } else {
+                        System.out.println("Account not found with the specified number.");
+                    }
+                    break;
+                case 21://update account by his number
+                    List<Optional<Account>> allAccounts6 = accountI.getAllAccounts();
+                    System.out.println("Enter the account number:");
+                    int accountNumberToFind = scanner.nextInt();
+                    scanner.nextLine();
+
+                    Optional<Account> accountToUpdate = allAccounts6.stream()
+                            .filter(account -> account.isPresent() && account.get().getNumber() == accountNumberToFind)
+                            .map(Optional::get)
+                            .findFirst();
+
+                    if (accountToUpdate.isPresent()) {
+                        Account account = accountToUpdate.get();
+                        System.out.println("Account found. Current details:");
+                        System.out.println("Number: " + account.getNumber());
+                        System.out.println("Balance: " + account.getBalance());
+                        System.out.println("creation date: " + account.getCreationDate());
+                        System.out.println("Status: " + account.getStatus());
+                        System.out.println("Matricule: " + account.getEmployee().getMatricule());
+                        System.out.println("Code: " + account.getClient().getCode());
+                        if (account instanceof CurrentAccount) {
+                            CurrentAccount currentAccount = (CurrentAccount) account;
+                            System.out.println("overdraft: " + currentAccount.getOverdraft());
+                        } else if (account instanceof SavingAccount) {
+                            SavingAccount savingAccount = (SavingAccount) account;
+                            System.out.println("interest rate: " + savingAccount.getInterestRate());
+                        }
+
+                        System.out.println("Enter new account information (or leave blank to keep existing information):");
+
+                        System.out.print("Enter new Balance: ");
+                        Float newBalance = scanner.nextFloat();
+                        scanner.nextLine();
+
+                        System.out.print("Enter new Status: ");
+                        String newStatusInput = scanner.nextLine();
+                        Account.AccountStatus newStatus = null;
+                        if (!newStatusInput.isEmpty()) {
+                            newStatus = Account.AccountStatus.valueOf(newStatusInput);
+                        }
+
+                        if (account instanceof CurrentAccount) {
+                            CurrentAccount currentAccount = (CurrentAccount) account;
+
+                            System.out.print("Enter new overdraft: ");
+                            Float newOverdraft = scanner.nextFloat();
+                            scanner.nextLine();
+
+                            currentAccount.setOverdraft(newOverdraft);
+                        } else if (account instanceof SavingAccount) {
+                            SavingAccount savingAccount = (SavingAccount) account;
+
+                            System.out.print("Enter new interest rate: ");
+                            Float newInterestRate = scanner.nextFloat();
+                            scanner.nextLine();
+
+                            savingAccount.setInterestRate(newInterestRate);
+                        }
+
+                        // Update the account with the new values
+                        if (newBalance != null) {
+                            account.setBalance(newBalance);
+                        }
+                        if (newStatus != null) {
+                            account.setStatus(newStatus);
+                        }
+
+                        Optional<Account> updatedAccount = accountI.updateAccount(account);
+
+                        if (updatedAccount.isPresent()) {
+                            Account updated = updatedAccount.get();
+
+
+                            System.out.println("Account updated successfully. Updated details:");
+                            System.out.println("Number: " + updated.getNumber());
+                            System.out.println("Balance: " + updated.getBalance());
+                            System.out.println("Status: " + updated.getStatus());
+                            System.out.println("Matricule: " + updated.getEmployee().getMatricule());
+                            System.out.println("Code: " + updated.getClient().getCode());
+                            if (account instanceof CurrentAccount) {
+                                CurrentAccount currentAccount = (CurrentAccount) account;
+                                System.out.println("overdraft: " + currentAccount.getOverdraft());
+                            } else if (account instanceof SavingAccount) {
+                                SavingAccount savingAccount = (SavingAccount) account;
+                                System.out.println("interest rate: " + savingAccount.getInterestRate());
+                            }
+                        } else {
+                            System.out.println("Failed to update the account.");
+                        }
+                    } else {
+                        System.out.println("Account not found with the specified number.");
+                    }
+                    break;
+
+
 
             }
 

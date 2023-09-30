@@ -12,4 +12,5 @@ public interface AccountInterface {
     boolean deleteByNumber(Integer deleteNumber);
     List<Account> searchByCode(Integer searchCode2);
     List<Optional<Account>> getAllAccounts();
+    Optional<Account> updateAccount(Account account);
 }
