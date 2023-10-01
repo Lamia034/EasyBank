@@ -8,14 +8,17 @@ public class Operation {
 
     private float montant;
     private typeOperation type;
-
+    private Employee employee;
+    private Account account;
 
     public Operation(){}
-    public Operation(Integer number, LocalDate creationDate, float montant, typeOperation type){
+    public Operation(Integer number, LocalDate creationDate, float montant, typeOperation type, Employee employee, Account account){
         this.number = number;
         this.creationDate = creationDate;
         this.montant = montant;
         this.type = type;
+        this.employee = employee;
+        this.account = account;
     }
 
     public Integer getNumber(){
@@ -44,6 +47,23 @@ public class Operation {
     }
     public void setType(typeOperation type){
         this.type = type;
+    }
+
+    public Employee getEmployee() {
+        return employee;
+    }
+
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
+    }
+
+    // Getter and setter for client
+    public Account getAccount() {
+        return account;
+    }
+
+    public void setAccount(Account account) {
+        this.account = account;
     }
 
     public enum typeOperation{

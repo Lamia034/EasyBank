@@ -9,6 +9,7 @@ import java.util.Scanner;
 import implementations.EmployeeImplementation;
 import implementations.ClientImplementation;
 import implementations.AccountImplementation;
+import implementations.OperationImplementation;
 
 import java.time.format.DateTimeFormatter;
 
@@ -26,6 +27,8 @@ public class Main {
     static CurrentAccount currentaccount = new CurrentAccount();
     static SavingAccount savingaccount = new SavingAccount();
     static AccountImplementation accountI = new AccountImplementation();
+    static Operation operation = new Operation();
+    static OperationImplementation operationI = new OperationImplementation();
 
     public static void main(String[] args) {
         DatabaseConnection dbConnection = DatabaseConnection.getInstance();
@@ -62,6 +65,7 @@ public class Main {
             System.out.println("19. display accounts by creation date");//done
             System.out.println("20. change account status ");//done with stream api and lambda expression
             System.out.println("21. update account ");//done
+            System.out.println("22. add operation ");//done
 
             choice = scanner.nextInt();
             scanner.nextLine();
@@ -869,6 +873,82 @@ public class Main {
                         System.out.println("Account not found with the specified number.");
                     }
                     break;
+                case 22: // Add operation
+                    System.out.print("Enter matricule: ");
+                    String matricule = scanner.nextLine();
+
+
+                    Employee employee = new Employee();
+
+                    employee.setMatricule(matricule);
+
+                    System.out.print("Enter account code: ");
+                    int accountCode = scanner.nextInt();
+
+                    System.out.print("Enter operation montant: ");
+                    float montant = scanner.nextFloat();
+                    scanner.nextLine();
+
+                    System.out.println("Enter operation type:");
+                    System.out.println("1. PAYMENT");
+                    System.out.println("2. WITHDRAW");
+                    int choice4 = scanner.nextInt();
+                    scanner.nextLine();
+                    Operation.typeOperation operationType;
+                    switch (choice4) {
+                        case 1:
+                            operationType = Operation.typeOperation.PAYEMENT;
+                            break;
+                        case 2:
+                            operationType = Operation.typeOperation.WITHDRAW;
+                            break;
+                        default:
+                            System.out.println("Invalid choice. Defaulting to PAYMENT.");
+                            operationType = Operation.typeOperation.PAYEMENT;
+                            break;
+                    }
+
+                    Operation operation = new Operation();
+                    operation.setEmployee(employee);
+                    Account account;
+                    System.out.println("Enter account type:");
+                    System.out.println("1. Current Account");
+                    System.out.println("2. Saving Account");
+                    int accountChoice = scanner.nextInt();
+                    scanner.nextLine();
+                    switch (accountChoice) {
+                        case 1:
+                            account = new CurrentAccount();
+                            break;
+                        case 2:
+                            account = new SavingAccount();
+                            break;
+                        default:
+                            System.out.println("Invalid choice. Defaulting to Current Account.");
+                            account = new CurrentAccount();
+                            break;
+                    }
+
+                    account.setNumber(accountCode);
+                    operation.setAccount(account);
+                    operation.setMontant(montant);
+                    operation.setType(operationType);
+
+                    Optional<Operation> addedOperation = operationI.add(operation);
+
+                    if (addedOperation.isPresent()) {
+                        Operation added = addedOperation.get();
+                        System.out.println("Operation added successfully!");
+                        System.out.println("Number: " + added.getNumber());
+                        System.out.println("Creation Date: " + added.getCreationDate());
+                        System.out.println("Montant: " + added.getMontant());
+                        System.out.println("Type: " + added.getType());
+                    } else {
+                        System.out.println("Failed to add the operation.");
+                    }
+                    break;
+
+
 
 
 
