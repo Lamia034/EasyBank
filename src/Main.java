@@ -70,6 +70,7 @@ public class Main {
             System.out.println("24. find operation ");//done
             System.out.println("25. add mission ");//done
             System.out.println("26. delete mission ");//done
+            System.out.println("27. display list of mission ");//done
 
             choice = scanner.nextInt();
             scanner.nextLine();
@@ -1035,10 +1036,29 @@ public class Main {
                         System.out.println("Failed to delete the mission.");
                     }
                     break;
+                case 27: // List ALL missions
+                    List<Optional<Mission>> allMissions = missionI.getAllMissions();
+
+                        System.out.println("All mission(s):");
+                        for (Optional<Mission> optionalMission : allMissions) {
+                            if (optionalMission.isPresent()) {
+                                Mission mission = optionalMission.get();
+
+                                    System.out.println("Mission:");
+                                    System.out.println("code: " + mission.getCode());
+                                    System.out.println("name: " + mission.getName());
+                                    System.out.println("description: " + mission.getDescription());
+                                    System.out.println();
+                                } else {
+                                System.out.println("No accounts found.");
+                            }
+                            }
+                        }
+
+                    break;
 
 
 
-            }
 
         } while (!exit);
 

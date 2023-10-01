@@ -1,10 +1,13 @@
 package implementations;
 
-import dto.Mission;
+import dto.*;
 import helper.DatabaseConnection;
 import interfaces.MissionInterface;
 
 import java.sql.*;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class MissionImplementation implements MissionInterface {
@@ -52,6 +55,37 @@ public Optional<Mission> addMission(Mission mission) {
             e.printStackTrace();
             return Optional.empty();
         }
+    }
+    @Override
+    public List<Optional<Mission>> getAllMissions() {
+        List<Optional<Mission>> missions = new ArrayList<>();
+
+        try (Connection conn = db.getConnection()) {
+            String query = "SELECT * FROM mission";
+
+            try (PreparedStatement preparedStatement = conn.prepareStatement(query)) {
+                ResultSet resultSet = preparedStatement.executeQuery();
+
+                while (resultSet.next()) {
+                    int code = resultSet.getInt("code");
+                    String name = resultSet.getString("name");
+                    String description = resultSet.getString("description");
+
+                    Mission mission = new Mission();
+                    mission.setCode(code);
+                    mission.setName(name);
+                    mission.setDescription(description);
+
+                    Optional<Mission> optionalMission = Optional.of(mission);
+
+                    missions.add(optionalMission);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return missions;
     }
 
 
