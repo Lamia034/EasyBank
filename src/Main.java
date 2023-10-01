@@ -29,6 +29,8 @@ public class Main {
     static OperationImplementation operationI = new OperationImplementation();
     static Mission mission = new Mission();
     static MissionImplementation missionI = new MissionImplementation();
+    static Affectation affectation = new Affectation();
+    static AffectationImplementation affectationI = new AffectationImplementation();
 
     public static void main(String[] args) throws SQLException {
         DatabaseConnection dbConnection = DatabaseConnection.getInstance();
@@ -71,6 +73,7 @@ public class Main {
             System.out.println("25. add mission ");//done
             System.out.println("26. delete mission ");//done
             System.out.println("27. display list of mission ");//done
+            System.out.println("28. create affectation");//done
 
             choice = scanner.nextInt();
             scanner.nextLine();
@@ -218,9 +221,8 @@ public class Main {
                             }
 
 
-
                             if (employeeI.update(employeeToUpdate) != null) {
-                                System.out.println("employee updated successfully! with name:" + employeeToUpdate.getName() + " , prenoun " + employeeToUpdate.getPrenoun() + " , email " + employeeToUpdate.getEmail() + " , phone " + employeeToUpdate.getPhone()  + " , birth date " + employeeToUpdate.getBirthDate()+ " , hiring date " + employeeToUpdate.getHiringDate()   );
+                                System.out.println("employee updated successfully! with name:" + employeeToUpdate.getName() + " , prenoun " + employeeToUpdate.getPrenoun() + " , email " + employeeToUpdate.getEmail() + " , phone " + employeeToUpdate.getPhone() + " , birth date " + employeeToUpdate.getBirthDate() + " , hiring date " + employeeToUpdate.getHiringDate());
                             } else {
                                 System.out.println("Failed to update the employee.");
                             }
@@ -232,7 +234,6 @@ public class Main {
                     } catch (NumberFormatException e) {
                         System.out.println("Invalid input. Please enter a valid matricule.");
                     }
-
 
 
                     break;
@@ -326,7 +327,7 @@ public class Main {
                     if (addResult.isPresent()) {
                         Client addedClient = addResult.get();
                         System.out.println("Client added successfully!:");
-                        System.out.println("name: " + addedClient.getName() + ",prenoun: " + addedClient.getPrenoun() + ",Birth date: " + addedClient.getBirthDate() + " phone: " + addedClient.getPhone()  + " code: " + addedClient.getCode() + " adresse: " + addedClient.getAdresse());
+                        System.out.println("name: " + addedClient.getName() + ",prenoun: " + addedClient.getPrenoun() + ",Birth date: " + addedClient.getBirthDate() + " phone: " + addedClient.getPhone() + " code: " + addedClient.getCode() + " adresse: " + addedClient.getAdresse());
                     } else {
                         System.out.println("Failed to add the client.");
                     }
@@ -434,7 +435,7 @@ public class Main {
                             }
 
                             if (clientI.update(clientToUpdate) != null) {
-                                System.out.println("client updated successfully! with name:" + clientToUpdate.getName() + " , prenoun " + clientToUpdate.getPrenoun() + " , adresse " + clientToUpdate.getAdresse() + " , phone " + clientToUpdate.getPhone()  + " , birth date " + clientToUpdate.getBirthDate() );
+                                System.out.println("client updated successfully! with name:" + clientToUpdate.getName() + " , prenoun " + clientToUpdate.getPrenoun() + " , adresse " + clientToUpdate.getAdresse() + " , phone " + clientToUpdate.getPhone() + " , birth date " + clientToUpdate.getBirthDate());
                             } else {
                                 System.out.println("Failed to update the client.");
                             }
@@ -509,9 +510,9 @@ public class Main {
                     currentaccount.setOverdraft(scanner.nextFloat());
                     scanner.nextLine();
 
-                    if (accountI.addcurrent(employeeMatricule,clientCode, currentaccount) != null) {
+                    if (accountI.addcurrent(employeeMatricule, clientCode, currentaccount) != null) {
                         System.out.println("Current account added successfully!:");
-                        System.out.println("account number: " + currentaccount.getNumber() + ",balance: " + currentaccount.getBalance() + ",Creation date: " + currentaccount.getCreationDate() + " status: " + currentaccount.getStatus() + ", Overdraft: " + currentaccount.getOverdraft()  );
+                        System.out.println("account number: " + currentaccount.getNumber() + ",balance: " + currentaccount.getBalance() + ",Creation date: " + currentaccount.getCreationDate() + " status: " + currentaccount.getStatus() + ", Overdraft: " + currentaccount.getOverdraft());
                     } else {
                         System.out.println("Failed to add the account.");
                     }
@@ -557,9 +558,9 @@ public class Main {
                     savingaccount.setInterestRate(scanner.nextFloat());
                     scanner.nextLine();
 
-                    if (accountI.addsaving(employeeMatriculee,clientCodee,savingaccount) != null) {
+                    if (accountI.addsaving(employeeMatriculee, clientCodee, savingaccount) != null) {
                         System.out.println("saving account added successfully!:");
-                        System.out.println("account number: " + savingaccount.getNumber() + ",balance: " + savingaccount.getBalance() + ",Creation date: " + savingaccount.getCreationDate() + " status: " + savingaccount.getStatus() + ", Overdraft: " + savingaccount.getInterestRate()  );
+                        System.out.println("account number: " + savingaccount.getNumber() + ",balance: " + savingaccount.getBalance() + ",Creation date: " + savingaccount.getCreationDate() + " status: " + savingaccount.getStatus() + ", Overdraft: " + savingaccount.getInterestRate());
                     } else {
                         System.out.println("Failed to add the account.");
                     }
@@ -588,7 +589,7 @@ public class Main {
                         System.out.println("Found account(s):");
                         for (Account foundAccount : foundAccounts) {
                             if (foundAccount instanceof CurrentAccount) {
-                               CurrentAccount currentAccount = (CurrentAccount) foundAccount;
+                                CurrentAccount currentAccount = (CurrentAccount) foundAccount;
                                 System.out.println("Current Account:");
                                 System.out.println("number: " + currentAccount.getNumber());
                                 System.out.println("balance: " + currentAccount.getBalance());
@@ -694,12 +695,10 @@ public class Main {
 
                             System.out.println();
                         }
-                    }else{
+                    } else {
                         System.out.println("no account found with this status");
                     }
                     break;
-
-
 
 
                 case 19:// filter accounts by creation date
@@ -958,7 +957,6 @@ public class Main {
                     break;
 
 
-
                 case 23: // Delete operation
                     System.out.print("Enter operation number to delete: ");
                     int operationNumberToDelete = scanner.nextInt();
@@ -1039,28 +1037,69 @@ public class Main {
                 case 27: // List ALL missions
                     List<Optional<Mission>> allMissions = missionI.getAllMissions();
 
-                        System.out.println("All mission(s):");
-                        for (Optional<Mission> optionalMission : allMissions) {
-                            if (optionalMission.isPresent()) {
-                                Mission mission = optionalMission.get();
+                    System.out.println("All mission(s):");
+                    for (Optional<Mission> optionalMission : allMissions) {
+                        if (optionalMission.isPresent()) {
+                            Mission mission = optionalMission.get();
 
-                                    System.out.println("Mission:");
-                                    System.out.println("code: " + mission.getCode());
-                                    System.out.println("name: " + mission.getName());
-                                    System.out.println("description: " + mission.getDescription());
-                                    System.out.println();
-                                } else {
-                                System.out.println("No accounts found.");
-                            }
-                            }
+                            System.out.println("Mission:");
+                            System.out.println("code: " + mission.getCode());
+                            System.out.println("name: " + mission.getName());
+                            System.out.println("description: " + mission.getDescription());
+                            System.out.println();
+                        } else {
+                            System.out.println("No accounts found.");
                         }
+                    }
 
+
+                    break;
+                case 28: // Add affectation
+                    System.out.print("Enter matricule: ");
+                    String matriculeInput = scanner.nextLine();
+
+                    System.out.print("Enter mission code: ");
+                    int missionCode = scanner.nextInt();
+                    scanner.nextLine();
+
+                    System.out.print("Enter end date of this affectation (dd-MM-yyyy): ");
+                    String endDateInput = scanner.nextLine();
+                    LocalDate endDate = null;
+
+                    try {
+                        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+                        endDate = LocalDate.parse(endDateInput, dateFormatter);
+                    } catch (DateTimeParseException e) {
+                        System.err.println("Invalid date format. Please use dd-MM-yyyy.");
+                        break;
+                    }
+
+
+                    affectation.setEmployee(new Employee());
+                    affectation.setMission(new Mission());
+
+                    affectation.getEmployee().setMatricule(matriculeInput);
+                    affectation.getMission().setCode(missionCode);
+                    affectation.setEndDate(endDate);
+
+                    Optional<Affectation> addedAffectation = affectationI.add(affectation);
+
+                    if (addedAffectation.isPresent()) {
+                        Affectation added = addedAffectation.get();
+                        System.out.println("Affectation added successfully!");
+                        System.out.println("Matricule: " + added.getEmployee().getMatricule());
+                        System.out.println("Mission Code: " + added.getMission().getCode());
+                        System.out.println("Start Date: " + added.getStartDate());
+                        System.out.println("End Date: " + added.getEndDate());
+                    } else {
+                        System.out.println("Failed to add the affectation.");
+                    }
                     break;
 
 
+            }
 
-
-        } while (!exit);
+        }   while (!exit) ;
 
 
         try {
