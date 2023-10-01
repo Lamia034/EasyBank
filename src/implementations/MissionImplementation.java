@@ -39,5 +39,22 @@ public Optional<Mission> addMission(Mission mission) {
 
     return Optional.empty();
 }
+    @Override
+    public Optional<Boolean> deleteMissionByCode(Integer missionCodeToDelete) {
+        Connection conn = DatabaseConnection.getInstance().getConnection();
+
+        String deleteMissionSQL = "DELETE FROM mission WHERE code = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(deleteMissionSQL)) {
+            pstmt.setInt(1, missionCodeToDelete);
+            int affectedRows = pstmt.executeUpdate();
+            return Optional.of(affectedRows > 0);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return Optional.empty();
+        }
+    }
+
 
 }
+
+

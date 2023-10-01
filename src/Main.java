@@ -69,6 +69,7 @@ public class Main {
             System.out.println("23. delete operation ");//done
             System.out.println("24. find operation ");//done
             System.out.println("25. add mission ");//done
+            System.out.println("26. delete mission ");//done
 
             choice = scanner.nextInt();
             scanner.nextLine();
@@ -1017,7 +1018,23 @@ public class Main {
                         System.out.println("Failed to add the mission.");
                     }
                     break;
+                case 26: // Delete mission
+                    System.out.print("Enter mission code to delete: ");
+                    int missionCodeToDelete = scanner.nextInt();
+                    scanner.nextLine();
 
+                    Optional<Boolean> deleteMissionResult = missionI.deleteMissionByCode(missionCodeToDelete);
+
+                    if (deleteMissionResult.isPresent()) {
+                        if (deleteMissionResult.get()) {
+                            System.out.println("Mission deleted successfully.");
+                        } else {
+                            System.out.println("Mission not found with the specified code.");
+                        }
+                    } else {
+                        System.out.println("Failed to delete the mission.");
+                    }
+                    break;
 
 
 
