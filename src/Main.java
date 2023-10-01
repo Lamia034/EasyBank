@@ -7,10 +7,7 @@ import java.time.format.DateTimeParseException;
 import java.util.Optional;
 import java.util.Scanner;
 
-import implementations.EmployeeImplementation;
-import implementations.ClientImplementation;
-import implementations.AccountImplementation;
-import implementations.OperationImplementation;
+import implementations.*;
 
 import java.time.format.DateTimeFormatter;
 
@@ -30,6 +27,8 @@ public class Main {
     static AccountImplementation accountI = new AccountImplementation();
     static Operation operation = new Operation();
     static OperationImplementation operationI = new OperationImplementation();
+    static Mission mission = new Mission();
+    static MissionImplementation missionI = new MissionImplementation();
 
     public static void main(String[] args) throws SQLException {
         DatabaseConnection dbConnection = DatabaseConnection.getInstance();
@@ -69,6 +68,7 @@ public class Main {
             System.out.println("22. add operation ");//done
             System.out.println("23. delete operation ");//done
             System.out.println("24. find operation ");//done
+            System.out.println("25. add mission ");//done
 
             choice = scanner.nextInt();
             scanner.nextLine();
@@ -877,16 +877,16 @@ public class Main {
                     }
                     break;
                 case 22: // Add operation
+                    List<Optional<Account>> allAccounts7 = accountI.getAllAccounts();
                     System.out.print("Enter matricule: ");
                     String matricule = scanner.nextLine();
 
-
                     Employee employee = new Employee();
-
                     employee.setMatricule(matricule);
 
-                    System.out.print("Enter account code: ");
-                    int accountCode = scanner.nextInt();
+                    System.out.print("Enter account number: ");
+                    int accountNumber = scanner.nextInt();
+                    scanner.nextLine();
 
                     System.out.print("Enter operation montant: ");
                     float montant = scanner.nextFloat();
@@ -911,45 +911,51 @@ public class Main {
                             break;
                     }
 
-                    Operation operation = new Operation();
-                    operation.setEmployee(employee);
-                    Account account;
-                    System.out.println("Enter account type:");
-                    System.out.println("1. Current Account");
-                    System.out.println("2. Saving Account");
-                    int accountChoice = scanner.nextInt();
-                    scanner.nextLine();
-                    switch (accountChoice) {
-                        case 1:
-                            account = new CurrentAccount();
-                            break;
-                        case 2:
-                            account = new SavingAccount();
-                            break;
-                        default:
-                            System.out.println("Invalid choice. Defaulting to Current Account.");
-                            account = new CurrentAccount();
-                            break;
-                    }
+                    Optional<Account> accountOptional = allAccounts7.stream()
+                            .filter(account -> account.isPresent() && account.get().getNumber() == accountNumber)
+                            .map(Optional::get)
+                            .findFirst();
 
-                    account.setNumber(accountCode);
-                    operation.setAccount(account);
-                    operation.setMontant(montant);
-                    operation.setType(operationType);
+                    if (accountOptional.isPresent()) {
+                        Account account = accountOptional.get();
 
-                    Optional<Operation> addedOperation = operationI.add(operation);
+                        // Create a new Operation object
+                        Operation operation = new Operation();
+                        operation.setEmployee(employee);
+                        operation.setAccount(account);
+                        operation.setMontant(montant);
+                        operation.setType(operationType);
 
-                    if (addedOperation.isPresent()) {
-                        Operation added = addedOperation.get();
-                        System.out.println("Operation added successfully!");
-                        System.out.println("Number: " + added.getNumber());
-                        System.out.println("Creation Date: " + added.getCreationDate());
-                        System.out.println("Montant: " + added.getMontant());
-                        System.out.println("Type: " + added.getType());
+                        if (operation.getType() == Operation.typeOperation.PAYEMENT) {
+                            // Add montant to the account balance
+                            account.setBalance(account.getBalance() + montant);
+                        } else if (operation.getType() == Operation.typeOperation.WITHDRAW) {
+                            // Subtract montant from the account balance
+                            account.setBalance(account.getBalance() - montant);
+                        }
+
+                        // Update the account balance in the database
+                        accountI.updateAccount(account);
+
+                        // Add the operation to the database
+                        Optional<Operation> addedOperation = operationI.add(operation);
+
+                        if (addedOperation.isPresent()) {
+                            Operation added = addedOperation.get();
+                            System.out.println("Operation added successfully!");
+                            System.out.println("Number: " + added.getNumber());
+                            System.out.println("Creation Date: " + added.getCreationDate());
+                            System.out.println("Montant: " + added.getMontant());
+                            System.out.println("Type: " + added.getType());
+                        } else {
+                            System.out.println("Failed to add the operation.");
+                        }
                     } else {
-                        System.out.println("Failed to add the operation.");
+                        System.out.println("Account not found with the specified number.");
                     }
                     break;
+
+
 
                 case 23: // Delete operation
                     System.out.print("Enter operation number to delete: ");
@@ -986,6 +992,29 @@ public class Main {
                         System.out.println("Account Number: " + operation1.getAccount().getNumber());
                     } else {
                         System.out.println("Operation not found with the specified number.");
+                    }
+                    break;
+                case 25: // Add mission
+                    System.out.print("Enter mission name: ");
+                    String missionName = scanner.nextLine();
+
+                    System.out.print("Enter mission description: ");
+                    String missionDesc = scanner.nextLine();
+
+
+                    mission.setName(missionName);
+                    mission.setDescription(missionDesc);
+
+                    Optional<Mission> addedMission = missionI.addMission(mission);
+
+                    if (addedMission.isPresent()) {
+                        Mission added = addedMission.get();
+                        System.out.println("Mission added successfully!");
+                        System.out.println("Code: " + added.getCode());
+                        System.out.println("Name: " + added.getName());
+                        System.out.println("Description: " + added.getDescription());
+                    } else {
+                        System.out.println("Failed to add the mission.");
                     }
                     break;
 

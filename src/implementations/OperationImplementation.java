@@ -84,7 +84,6 @@ public class OperationImplementation implements OperationInterface {
                     operation.setMontant(resultSet.getFloat("montant"));
                     operation.setType(Operation.typeOperation.valueOf(resultSet.getString("typeOperation")));
 
-                    // Create and set the Employee object
                     Employee employee = new Employee();
                     employee.setMatricule(resultSet.getString("employeematricule"));
                     operation.setEmployee(employee);
