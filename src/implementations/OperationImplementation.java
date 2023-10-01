@@ -52,7 +52,22 @@ public class OperationImplementation implements OperationInterface {
             e.printStackTrace();
         }
 
-        return Optional.empty(); // Return empty Optional if insertion failed
+        return Optional.empty();
     }
+
+    public Optional<Boolean> deleteOperationByNumber(int operationNumber) {
+        try (Connection conn = db.getConnection()) {
+            String query = "DELETE FROM operation WHERE number = ?";
+            try (PreparedStatement preparedStatement = conn.prepareStatement(query)) {
+                preparedStatement.setInt(1, operationNumber);
+                int rowsDeleted = preparedStatement.executeUpdate();
+                return Optional.of(rowsDeleted > 0); // Return Optional<Boolean>
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return Optional.empty(); // Return empty Optional in case of any exception
+        }
+    }
+
 
 }

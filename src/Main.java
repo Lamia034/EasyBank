@@ -66,6 +66,7 @@ public class Main {
             System.out.println("20. change account status ");//done with stream api and lambda expression
             System.out.println("21. update account ");//done
             System.out.println("22. add operation ");//done
+            System.out.println("23. delete operation ");//done
 
             choice = scanner.nextInt();
             scanner.nextLine();
@@ -948,6 +949,23 @@ public class Main {
                     }
                     break;
 
+                case 23: // Delete operation
+                    System.out.print("Enter operation number to delete: ");
+                    int operationNumberToDelete = scanner.nextInt();
+                    scanner.nextLine();
+
+                    Optional<Boolean> deletionResult = operationI.deleteOperationByNumber(operationNumberToDelete);
+
+                    if (deletionResult.isPresent()) {
+                        if (deletionResult.get()) {
+                            System.out.println("Operation deleted successfully.");
+                        } else {
+                            System.out.println("Operation not found with the specified number.");
+                        }
+                    } else {
+                        System.out.println("Failed to delete the operation.");
+                    }
+                    break;
 
 
 
