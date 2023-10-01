@@ -1,6 +1,7 @@
 import dto.*;
 import helper.DatabaseConnection;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.Optional;
@@ -30,7 +31,7 @@ public class Main {
     static Operation operation = new Operation();
     static OperationImplementation operationI = new OperationImplementation();
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
         DatabaseConnection dbConnection = DatabaseConnection.getInstance();
 
 
@@ -67,6 +68,7 @@ public class Main {
             System.out.println("21. update account ");//done
             System.out.println("22. add operation ");//done
             System.out.println("23. delete operation ");//done
+            System.out.println("24. find operation ");//done
 
             choice = scanner.nextInt();
             scanner.nextLine();
@@ -964,6 +966,26 @@ public class Main {
                         }
                     } else {
                         System.out.println("Failed to delete the operation.");
+                    }
+                    break;
+                case 24: // Search operation by number
+                    System.out.print("Enter operation number to search: ");
+                    int operationNumberToSearch = scanner.nextInt();
+                    scanner.nextLine();
+
+                    Optional<Operation> searchedOperation = operationI.getOperationByNumber(operationNumberToSearch);
+
+                    if (searchedOperation.isPresent()) {
+                        Operation operation1 = searchedOperation.get();
+                        System.out.println("Operation found:");
+                        System.out.println("Number: " + operation1.getNumber());
+                        System.out.println("Creation Date: " + operation1.getCreationDate());
+                        System.out.println("Montant: " + operation1.getMontant());
+                        System.out.println("Type: " + operation1.getType());
+                        System.out.println("Employee Matricule: " + operation1.getEmployee().getMatricule());
+                        System.out.println("Account Number: " + operation1.getAccount().getNumber());
+                    } else {
+                        System.out.println("Operation not found with the specified number.");
                     }
                     break;
 

@@ -1,6 +1,6 @@
 package implementations;
 
-import dto.Operation;
+import dto.*;
 import interfaces.OperationInterface;
 
 import java.sql.*;
@@ -8,7 +8,7 @@ import java.util.Optional;
 
 import interfaces.EmployeeInterface;
 import helper.DatabaseConnection;
-import dto.Employee;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +54,7 @@ public class OperationImplementation implements OperationInterface {
 
         return Optional.empty();
     }
-
+@Override
     public Optional<Boolean> deleteOperationByNumber(int operationNumber) {
         try (Connection conn = db.getConnection()) {
             String query = "DELETE FROM operation WHERE number = ?";
@@ -69,5 +69,76 @@ public class OperationImplementation implements OperationInterface {
         }
     }
 
+    @Override
+    public Optional<Operation> getOperationByNumber(int operationNumber) {
+        try (Connection conn = db.getConnection()) {
+            String operationQuery = "SELECT * FROM operation WHERE number = ?";
+            try (PreparedStatement operationStatement = conn.prepareStatement(operationQuery)) {
+                operationStatement.setInt(1, operationNumber);
+                ResultSet resultSet = operationStatement.executeQuery();
+
+                if (resultSet.next()) {
+                    Operation operation = new Operation();
+                    operation.setNumber(resultSet.getInt("number"));
+                    operation.setCreationDate(resultSet.getDate("creationDate").toLocalDate());
+                    operation.setMontant(resultSet.getFloat("montant"));
+                    operation.setType(Operation.typeOperation.valueOf(resultSet.getString("typeOperation")));
+
+                    // Create and set the Employee object
+                    Employee employee = new Employee();
+                    employee.setMatricule(resultSet.getString("employeematricule"));
+                    operation.setEmployee(employee);
+
+                    int accountNumber = resultSet.getInt("accountNumber");
+                    if (isInCurrentAccount(accountNumber)) {
+                        CurrentAccount currentAccount = new CurrentAccount();
+                        currentAccount.setNumber(accountNumber);
+                        operation.setAccount(currentAccount);
+                    } else if (isInSavingAccount(accountNumber)) {
+                        SavingAccount savingAccount = new SavingAccount();
+                        savingAccount.setNumber(accountNumber);
+                        operation.setAccount(savingAccount);
+                    }
+
+                    return Optional.of(operation);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } catch (SQLException e) { // Catch the SQLException from getConnection()
+            e.printStackTrace();
+        }
+        return Optional.empty();
+    }
+
+
+
+    private boolean isInSavingAccount(int accountNumber) {
+        try (Connection conn = db.getConnection()) {
+            String query = "SELECT 1 FROM savingaccount WHERE number = ?";
+            try (PreparedStatement preparedStatement = conn.prepareStatement(query)) {
+                preparedStatement.setInt(1, accountNumber);
+                ResultSet resultSet = preparedStatement.executeQuery();
+                return resultSet.next();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private boolean isInCurrentAccount(int accountNumber) {
+        try (Connection conn = db.getConnection()) {
+            String query = "SELECT 1 FROM currentaccount WHERE number = ?";
+            try (PreparedStatement preparedStatement = conn.prepareStatement(query)) {
+                preparedStatement.setInt(1, accountNumber);
+                ResultSet resultSet = preparedStatement.executeQuery();
+                return resultSet.next();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
 }
