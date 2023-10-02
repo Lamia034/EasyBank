@@ -75,6 +75,7 @@ public class Main {
             System.out.println("29. display history affectations");//done
             System.out.println("30. delete affectation");//done
             System.out.println("31. statistics affectations");//done
+            System.out.println("31. exit");//done
 
             choice = scanner.nextInt();
             scanner.nextLine();
@@ -1153,7 +1154,7 @@ public class Main {
                                     affectation.get().getMission().getCode().equals(affectationCodeToDelete) &&
                                     affectation.get().getStartDate().equals(desiredDate2) &&
                                     affectation.get().getEndDate().equals(desiredDate3))
-                            .map(Optional::get)
+                            .map(Optional::get)// extract if present
                             .findFirst();
 
                     Optional<Boolean> deleteAffectationResult = affectationI.deleteAffectationByCode(affectationCodeToDelete, affectationMatriculeToDelete, desiredDate2, desiredDate3);
@@ -1199,7 +1200,9 @@ public class Main {
                     System.out.println(report);
                     System.out.println("______________________________");
                     break;
-
+                case 32:
+                    exit = true;
+                    break;
 
 
             }
