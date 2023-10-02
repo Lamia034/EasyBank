@@ -1181,7 +1181,7 @@ public class Main {
                     System.out.println(report);
                     System.out.println("______________________________");
                     break;*/
-                case 31:
+                case 31:// affectation statistics
                     Map<String, Integer> roleCounts = new HashMap<>();
 
                     int directorsCount = affectationI.getDirectorsCount().orElse(0);
