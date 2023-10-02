@@ -4,15 +4,13 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
-import java.util.Optional;
-import java.util.Scanner;
+import java.util.*;
 
 import implementations.*;
 
 import java.time.format.DateTimeFormatter;
 
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 
@@ -74,6 +72,9 @@ public class Main {
             System.out.println("26. delete mission ");//done
             System.out.println("27. display list of mission ");//done
             System.out.println("28. create affectation");//done
+            System.out.println("29. display history affectations");//done
+            System.out.println("30. delete affectation");//done
+            System.out.println("31. statistics affectations");//done
 
             choice = scanner.nextInt();
             scanner.nextLine();
@@ -1095,6 +1096,110 @@ public class Main {
                         System.out.println("Failed to add the affectation.");
                     }
                     break;
+                case 29: // Display history affectations
+                    List<Optional<Affectation>> allAffectations = affectationI.getallAffectations();
+
+                    System.out.println("History affectation(s):");
+                    for (Optional<Affectation> optionalAffectation : allAffectations) {
+                        if (optionalAffectation.isPresent()) {
+                            Affectation affectation = optionalAffectation.get();// extraire valeur
+
+                            System.out.println("Affectation:");
+                            System.out.println("Matricule: " + affectation.getEmployee().getMatricule());
+                            System.out.println("Mission Code: " + affectation.getMission().getCode());
+                            System.out.println("Start Date: " + affectation.getStartDate());
+                            System.out.println("End Date: " + affectation.getEndDate());
+                            System.out.println();
+                        } else {
+                            System.out.println("No affectations found.");
+                        }
+                    }
+
+                    break;
+                case 30: // Delete affectation
+                    List<Optional<Affectation>> allAffectations1 = affectationI.getallAffectations();
+                    System.out.print("Enter affectation matricule to delete: ");
+                    String affectationMatriculeToDelete = scanner.nextLine();
+
+                    System.out.print("Enter affectation code to delete: ");
+                    int affectationCodeToDelete = scanner.nextInt();
+                    scanner.nextLine();
+
+                    System.out.print("Enter a start date (yyyy-MM-dd): ");
+                    String affectationStartDateToDelete = scanner.nextLine();
+
+                    LocalDate desiredDate2;
+                    try {
+                        desiredDate2 = LocalDate.parse(affectationStartDateToDelete);
+                    } catch (DateTimeParseException e) {
+                        System.out.println("Invalid date format. Please use yyyy-MM-dd.");
+                        break;
+                    }
+
+                    System.out.print("Enter an end date (yyyy-MM-dd): ");
+                    String affectationEndDateToDelete = scanner.nextLine();
+
+                    LocalDate desiredDate3;
+                    try {
+                        desiredDate3 = LocalDate.parse(affectationEndDateToDelete);
+                    } catch (DateTimeParseException e) {
+                        System.out.println("Invalid date format. Please use yyyy-MM-dd.");
+                        break;
+                    }
+
+                    Optional<Affectation> affectationOptional = allAffectations1.stream()
+                            .filter(affectation -> affectation.isPresent() &&
+                                    affectation.get().getEmployee().getMatricule().equals(affectationMatriculeToDelete) &&
+                                    affectation.get().getMission().getCode().equals(affectationCodeToDelete) &&
+                                    affectation.get().getStartDate().equals(desiredDate2) &&
+                                    affectation.get().getEndDate().equals(desiredDate3))
+                            .map(Optional::get)
+                            .findFirst();
+
+                    Optional<Boolean> deleteAffectationResult = affectationI.deleteAffectationByCode(affectationCodeToDelete, affectationMatriculeToDelete, desiredDate2, desiredDate3);
+
+                    if (deleteAffectationResult.isPresent()) {
+                        if (deleteAffectationResult.get()) {
+                            System.out.println("Affectation deleted successfully.");
+                        } else {
+                            System.out.println("Affectation not found with the specified code.");
+                        }
+                    } else {
+                        System.out.println("Failed to delete the affectation.");
+                    }
+                    break;
+
+          /*      case 31:
+                    int directorsCount = affectationI.getDirectorsCount().orElse(0);
+                    int accountManagersCount = affectationI.getAccountManagersCount().orElse(0);
+
+                    String report = "Bank Report:\n" +
+                            "Directors: " + directorsCount + "\n" +
+                            "Account Managers: " + accountManagersCount;
+
+                    System.out.println("______________________________");
+                    System.out.println(report);
+                    System.out.println("______________________________");
+                    break;*/
+                case 31:
+                    Map<String, Integer> roleCounts = new HashMap<>();
+
+                    int directorsCount = affectationI.getDirectorsCount().orElse(0);
+                    int accountManagersCount = affectationI.getAccountManagersCount().orElse(0);
+
+                    roleCounts.put("Directors", directorsCount);
+                    roleCounts.put("Account Managers", accountManagersCount);
+
+                    String report = "Bank Report:\n";
+                    for (Map.Entry<String, Integer> entry : roleCounts.entrySet()) {
+                        report += entry.getKey() + ": " + entry.getValue() + "\n";
+                    }
+
+                    System.out.println("______________________________");
+                    System.out.println(report);
+                    System.out.println("______________________________");
+                    break;
+
 
 
             }
