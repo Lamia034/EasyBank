@@ -11,6 +11,7 @@ public class Employee extends Person{
 
     private List<Affectation> affecting;
     private List<Account> accounts;
+    private List<Poste> postes;
     public Employee(){
 
         super();
