@@ -1,5 +1,6 @@
 package dto;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Employee extends Person{
@@ -9,9 +10,12 @@ public class Employee extends Person{
     private String email;
 
     private List<Affectation> affecting;
-
+    private List<Account> accounts;
+    private List<Poste> postes;
     public Employee(){
+
         super();
+        accounts = new ArrayList<>();
     }
 
     public Employee(String name, String prenoun, LocalDate birthDate, String phone, String matricule, LocalDate hiringDate, String email) {
@@ -19,6 +23,7 @@ public class Employee extends Person{
         this.matricule = matricule;
         this.hiringDate = hiringDate;
         this.email = email;
+        accounts = new ArrayList<>();
     }
 
     public String getMatricule() {

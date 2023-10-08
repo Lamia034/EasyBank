@@ -4,20 +4,20 @@ import java.time.LocalDate;
 
 public class CurrentAccount extends Account{
 
-    private float decouvert;
+    private float overdraft;
 
     public CurrentAccount(){
         super();
     }
-    public CurrentAccount(Integer number, float balance, LocalDate creationDate, AccountStatus status , float decouvert){
-        super( number, balance, creationDate, status);
-        this.decouvert = decouvert;
+    public CurrentAccount(Integer number, float balance, LocalDate creationDate, AccountStatus status ,Employee employee , Client client , float overdraft){
+        super( number, balance, creationDate, status , employee, client);
+        this.overdraft = overdraft;
     }
 
-    public float getDecouvert(){
-        return decouvert;
+    public float getOverdraft(){
+        return overdraft;
     }
-    public void setDecouvert(float decouvert){
-        this.decouvert = decouvert;
+    public void setOverdraft(float overdraft){
+        this.overdraft = overdraft;
     }
 }

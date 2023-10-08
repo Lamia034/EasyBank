@@ -3,11 +3,11 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 
 public abstract class Person {
-    private String name;
-    private String prenoun;
-    private LocalDate birthDate;
+    protected String name;
+    protected String prenoun;
+    protected LocalDate birthDate;
 
-    private String phone;
+    protected String phone;
 
     public Person(){
 

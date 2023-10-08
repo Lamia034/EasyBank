@@ -9,8 +9,8 @@ public class SavingAccount extends Account{
     public SavingAccount(){
         super();
     }
-    public SavingAccount(Integer number, float balance, LocalDate creationDate, AccountStatus status , float interestRate){
-        super( number, balance, creationDate, status);
+    public SavingAccount(Integer number, float balance, LocalDate creationDate, AccountStatus status ,Employee employee , Client client , float interestRate){
+        super( number, balance, creationDate, status , employee, client);
         this.interestRate = interestRate;
     }
 

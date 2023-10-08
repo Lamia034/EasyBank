@@ -8,9 +8,11 @@ public class Affectation {
     private Mission mission;
 
     public Affectation(){}
-    public Affectation(LocalDate startDate, LocalDate endDate){
+    public Affectation(LocalDate startDate, LocalDate endDate, Employee employee , Mission mission){
         this.startDate = startDate;
         this.endDate = endDate;
+        this.employee = employee;
+        this.mission = mission;
     }
 
     public LocalDate getStartDate(){
@@ -25,6 +27,20 @@ public class Affectation {
     }
     public void setEndDate(LocalDate endDate){
         this.endDate = endDate;
+    }
+    public Employee getEmployee() {
+        return employee;
+    }
+
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
+    }
+    public Mission getMission() {
+        return mission;
+    }
+
+    public void setMission(Mission mission) {
+        this.mission = mission;
     }
 
 
